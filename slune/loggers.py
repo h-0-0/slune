@@ -27,6 +27,6 @@ class LoggerDefault():
         # Append metrics dataframe to results dataframe
         self.results = pd.concat([self.results, metrics_df], ignore_index=True)
     
-    def read_log(self, args, kwargs):
+    def read_log(self, *args, **kwargs):
         # TODO: implement this function
         raise NotImplementedError

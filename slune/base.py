@@ -12,11 +12,11 @@ class Searcher():
         """
         return len(self.searcher)
     
-    def next_tune(self, args, kwargs):
+    def next_tune(self, *args, **kwargs):
         """
         Returns the next hyperparameter configuration to try. 
         """
-        return self.searcher.next_tune(args, kwargs)
+        return self.searcher.next_tune(*args, **kwargs)
 
 class Slog():
     """
@@ -29,23 +29,23 @@ class Slog():
         self.logger = Logger
         self.saver = Saver # TODO: Have to instantiate this with params, is there way you can just define the class?
     
-    def log(self, args, kwargs):
+    def log(self, *args, **kwargs):
         """
         Logs the metric/s for the current hyperparameter configuration, 
         stores them in a data frame that we can later save in storage.
         """
-        self.logger.log(args, kwargs)
+        self.logger.log(*args, **kwargs)
         
-    def save_collated(self, args, kwargs):
+    def save_collated(self, *args, **kwargs):
         """
         Saves the current results in logger to storage.
         """
-        self.saver.save_collated(self.logger.results, args, kwargs)
+        self.saver.save_collated(self.logger.results, *args, **kwargs)
     
-    def read(self, args, kwargs):
+    def read(self, *args, **kwargs):
         """
         Reads results from storage.
         """
-        return self.saver.read(args, kwargs)
+        return self.saver.read(*args, **kwargs)
 
 

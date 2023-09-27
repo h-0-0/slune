@@ -82,7 +82,7 @@ class SaverCsv():
         else:
             results.to_csv(self.current_path, index=False)
         
-    def read(self, args, kwargs):
+    def read(self, *args, **kwargs):
         # TODO: implement this function
         raise NotImplementedError
 
