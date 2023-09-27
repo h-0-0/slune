@@ -13,8 +13,8 @@ def submit_job(sh_path, args):
     """
     try:
         # Run the Bash script using subprocess
-        command = ['bash', sh_path] + args
-        subprocess.run(['sbatch', command], check=True)
+        command = [sh_path] + args
+        subprocess.run(['sbatch'] + command, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error running sbatch: {e}")
 

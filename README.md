@@ -7,6 +7,7 @@ So early I haven't even written the docs yet! Will be adding a quick example her
 ## Coming soon
 Currently very much in early stages, first things still to do:
 - Auto save when finished a tuning run.
+- Auto sbatch job naming and job output naming.
 - Add ability to read results, currently can only submit jobs and log metrics during tuning.
 - Refine class structure, ie. subclassing, making sure classes have essential methods, what are the essential methods and attributes? etc.
 - Refine package structure and sort out github actions like test coverage, running tests etc.

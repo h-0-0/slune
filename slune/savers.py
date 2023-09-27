@@ -31,8 +31,9 @@ class SaverCsv():
         missing_params = [[p for p in params if sp in p][0] for sp in stripped_params if sp not in match]
         # Now we add back in the values we stripped out
         match = match.split('/')
-        match = [match[0]] + [[p for p in params if m in p][0] for m in match[1:]]
-        match = '/'.join(match)
+        if(len(match) > 1):
+            match = [match[0]] + [[p for p in params if m in p][0] for m in match[1:]]
+            match = '/'.join(match)
         # If there are missing arguments, add them to the path
         if len(missing_params) > 0:
             match = os.path.join(match, *missing_params)
