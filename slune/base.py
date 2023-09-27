@@ -25,9 +25,9 @@ class Slog():
         - Logger (object): Class that handles logging of metrics, including the formatting that will be used to save and read the results.
         - Saver (object): Class that handles saving logs from Logger to storage and fetching correct logs from storage to give to Logger to read.
     """
-    def __init__(self, params, Logger, Saver):
+    def __init__(self, Logger, Saver):
         self.logger = Logger
-        self.saver = Saver(params)
+        self.saver = Saver # TODO: Have to instantiate this with params, is there way you can just define the class?
     
     def log(self, args, kwargs):
         """
