@@ -60,7 +60,7 @@ class TestSaverCsv(unittest.TestCase):
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder2=0.2", "--folder3=0.3"])
-        self.assertEqual(matching_dir, os.path.join(self.test_dir, "--folder2=0.2/--folder3=0.3"))
+        self.assertEqual(matching_dir, os.path.join(self.test_dir, '--folder2=0.2', '--folder3=0.3'))
 
     def test_get_match_no_match(self):
         # Create a SaverCsv instance

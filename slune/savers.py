@@ -36,7 +36,8 @@ class SaverCsv():
             match = '/'.join(match)
         # If there are missing arguments, add them to the path
         if len(missing_params) > 0:
-            match = os.path.join(match, *missing_params)
+            match = match + missing_params
+            match = os.path.join(*match)
         return match
 
     def get_path(self, params):

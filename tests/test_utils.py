@@ -54,6 +54,16 @@ class TestFindDirectoryPath(unittest.TestCase):
         search_strings = ['--folder1=', '--folder2=', '--folder3=', '--folder4=']
         result = find_directory_path(search_strings, root_directory=self.test_dir)
         self.assertEqual(result, os.path.join(self.test_dir, '--folder1=', '--folder2=', '--folder3=', '--folder4='))
+    
+    def test_root_dir_with_forward_slash(self):
+        search_strings = ['--folder2=', '--folder3=']
+        result = find_directory_path(search_strings, root_directory=self.test_dir + '/--folder1=0.1')
+        self.assertEqual(result, os.path.join(self.test_dir + '/--folder1=0.1', '--folder2=', '--folder3='))
+
+    def test_just_root_dir_forward_slash(self):
+        search_strings = ['--folder_not_there=']
+        result = find_directory_path(search_strings, root_directory=self.test_dir + '/--folder1=0.1' + '/--folder2=0.2' + '/another_folder')
+        self.assertEqual(result, os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', 'another_folder'))
 
 
 class TestDictToStrings(unittest.TestCase):

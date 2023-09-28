@@ -10,30 +10,37 @@ def find_directory_path(strings, root_directory='.'):
         - root_directory (string): Path to the root directory to be searched, default is current working directory.
     # TODO: could probably optimize this function
     """
-    # Get list of directories in root directory
-    dir_list = os.listdir(root_directory)
-    # Get substring up to and including '=' for each directory name in dir_list, and strip whitespace
-    stripped_dir_list = [d.split('=')[0].strip() +"=" for d in dir_list]
-    # Get rid of duplicates
-    stripped_dir_list = list(set(stripped_dir_list))
-    # Check if any of the strings are in the list of directories
-    for string in strings:
-        if string in stripped_dir_list:
-            # If a string is found it means that at the current root there is a directory starting "--string="
-            # we now want to find all directories in the root directory that start with "--string=" and search them recursively
-            # then we return the path to the deepest directory found
-            dir_list = [d for d in dir_list if d.startswith(string)]
-            # Recursively search each directory starting with string
-            paths = []
-            for d in dir_list:
-                paths.append(find_directory_path(strings, os.path.join(root_directory, d)))
-            # Return the deepest directory found, ie. most /'s in path
-            return max(paths, key=lambda x: x.count('/'))
-    # If no strings are found, return the root directory
-    dirs = root_directory.split('/')
-    dirs = [dirs[0]] + [d.split('=')[0].strip() +"=" for d in dirs[1:]]
-    root_directory = '/'.join(dirs)
-    return root_directory
+    def _find_directory_path(strings, curr_root, first_call=False):
+        # Get list of directories in root directory
+        dir_list = os.listdir(curr_root)
+        # Get substring up to and including '=' for each directory name in dir_list, and strip whitespace
+        stripped_dir_list = [d.split('=')[0].strip() +"=" for d in dir_list]
+        # Get rid of duplicates
+        stripped_dir_list = list(set(stripped_dir_list))
+        # Check if any of the strings are in the list of directories
+        for string in strings:
+            if string in stripped_dir_list:
+                # If a string is found it means that at the current root there is a directory starting "--string="
+                # we now want to find all directories in the root directory that start with "--string=" and search them recursively
+                # then we return the path to the deepest directory found
+                dir_list = [d for d in dir_list if d.startswith(string)]
+                # Recursively search each directory starting with string
+                paths = []
+                for d in dir_list:
+                    paths.append(_find_directory_path(strings, os.path.join(curr_root, d)))
+                # Return the deepest directory found, ie. most /'s in path
+                return max(paths, key=lambda x: x.count('/'))
+        # If no strings are found, return the root directory
+        if first_call:
+            pass
+        else:
+            curr_root = curr_root[len(root_directory):]
+            dirs = curr_root[1:].split('/')
+            dirs = [d.split('=')[0].strip() +"=" for d in dirs]
+            curr_root = '/'.join(dirs)
+            curr_root = os.path.join(root_directory, curr_root)
+        return curr_root
+    return _find_directory_path(strings, root_directory, first_call=True)
 
 
 def dict_to_strings(d):
