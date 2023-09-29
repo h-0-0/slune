@@ -54,13 +54,18 @@ def garg(args, arg_names):
     If arg_names is a list of strings then returns a list of the values of the argument names in arg_names.
     """
     def single_garg(arg_name):
+        # Check if arg_name is a string
+        if type(arg_name) != str:
+            raise TypeError(f"arg_name must be a string, got {type(arg_name)}")
         # Find index of argument
         arg_index = [i for i, arg in enumerate(args) if arg_name in arg]
         # Return value error if argument not found
         if not arg_index:
             raise ValueError(f"Argument {arg_name} not found in arguments {args}")
         # Return value of argument
-        return args[arg_index].split("=")[1]
+        if len(arg_index) > 1:
+            raise ValueError(f"Multiple arguments with name {arg_name} found in arguments {args}")
+        return args[arg_index[0]].split("=")[1]
     if type(arg_names) == list:
         return [single_garg(arg_name) for arg_name in arg_names]
     else:

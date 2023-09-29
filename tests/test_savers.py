@@ -115,6 +115,7 @@ class TestSaverCsv(unittest.TestCase):
         # Remove the results file
         os.remove(os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', '--folder3=0.3', 'results_1.csv'))
         
+# TODO: add tests for root_dir that has '/'s in it
 
 if __name__ == "__main__":
     unittest.main()
