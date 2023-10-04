@@ -6,13 +6,13 @@ So early I haven't even written the docs yet! Will be adding a quick example her
 
 ## Coming soon
 Currently very much in early stages, first things still to do:
-- Auto save when finished a tuning run.
-- Auto sbatch job naming and job output naming.
-- Add ability to read results, currently can only submit jobs and log metrics during tuning.
-- Refine class structure, ie. subclassing, making sure classes have essential methods, what are the essential methods and attributes? etc.
+- Get Searcher to check which tunings have been done and which haven't and only submit the ones that haven't been done yet. Depending on a flag, ie. if you want to re-run a tuning you can set a flag to re-run all tunings.
 - Refine package structure and sort out github actions like test coverage, running tests etc.
-- Add interfacing with SLURM to check for and re-submit failed jobs etc. 
 - Add more tests and documentation.
+- Auto sbatch job naming and job output naming.
+- Auto save when finished a tuning run.
+- Add interfacing with SLURM to check for and re-submit failed jobs etc. 
+- Cancelling submitted jobs quickly and easily.
 - Add some more subclasses for saving job results in different ways and for different tuning methods. 
 Although the idea for this package is to keep it ultra bare-bones and make it easy for the user to mod and add things themselves to their liking.
 

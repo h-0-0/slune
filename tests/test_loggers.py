@@ -5,7 +5,7 @@ from slune.loggers import LoggerDefault
 from datetime import datetime
 import time
 
-class TestLoggerDefault(unittest.TestCase):
+class TestLoggerDefaultWrite(unittest.TestCase):
     def setUp(self):
         self.logger = LoggerDefault()
         
@@ -48,6 +48,52 @@ class TestLoggerDefault(unittest.TestCase):
         self.assertEqual(row['metric1'], 42)
         self.assertEqual(row['metric2'], 99)
         self.assertEqual(row['time_stamp'].round('s'), rounded_timestamp)
+
+
+class TestLoggerDefaultRead(unittest.TestCase):
+    def setUp(self):
+        # Create an instance of LoggerDefault for testing
+        self.logger = LoggerDefault()
+
+    def test_read_min_metric(self):
+        # Create a sample DataFrame
+        data = {'Metric1': [1, 2, 3, 4],
+                'Metric2': [5, 6, 7, 8]}
+        df = pd.DataFrame(data)
+
+        # Test reading the minimum value of Metric1
+        result = self.logger.read_log(df, 'Metric1', min_max='min')
+        self.assertEqual(result, 1)
+
+    def test_read_max_metric(self):
+        # Create a sample DataFrame
+        data = {'Metric1': [1, 2, 3, 4],
+                'Metric2': [5, 6, 7, 8]}
+        df = pd.DataFrame(data)
+
+        # Test reading the maximum value of Metric2
+        result = self.logger.read_log(df, 'Metric2', min_max='max')
+        self.assertEqual(result, 8)
+
+    def test_invalid_metric_name(self):
+        # Create a sample DataFrame
+        data = {'Metric1': [1, 2, 3, 4],
+                'Metric2': [5, 6, 7, 8]}
+        df = pd.DataFrame(data)
+
+        # Test providing an invalid metric name
+        with self.assertRaises(KeyError):
+            self.logger.read_log(df, 'InvalidMetric', min_max='min')
+
+    def test_invalid_min_max_argument(self):
+        # Create a sample DataFrame
+        data = {'Metric1': [1, 2, 3, 4],
+                'Metric2': [5, 6, 7, 8]}
+        df = pd.DataFrame(data)
+
+        # Test providing an invalid value for min_max argument
+        with self.assertRaises(ValueError):
+            self.logger.read_log(df, 'Metric1', min_max='invalid_value')
 
 
 if __name__ == '__main__':

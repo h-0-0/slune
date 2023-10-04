@@ -1,6 +1,7 @@
+from slune.base import BaseSearcher
 from slune.utils import dict_to_strings
 
-class SearcherGrid():
+class SearcherGrid(BaseSearcher):
     """
     Given dictionary of hyperparameters and values to try, creates grid of all possible hyperparameter configurations,
     and returns them one by one for each call to next_tune.
@@ -9,7 +10,8 @@ class SearcherGrid():
             Structure of dictionary should be: { "--argument_name" : [Value_1, Value_2, ...], ... }
     TODO: Add extra functionality by using nested dictionaries to specify which hyperparameters to try together.
     """
-    def __init__(self, hyperparameters):
+    def __init__(self, hyperparameters: dict):
+        super().__init__()
         self.hyperparameters = hyperparameters
         self.grid = self.get_grid(hyperparameters)
         self.grid_index = None
@@ -20,7 +22,7 @@ class SearcherGrid():
         """
         return len(self.grid)
 
-    def get_grid(self, param_dict):
+    def get_grid(self, param_dict: dict):
         """
         Generate all possible combinations of values for each argument in the given dictionary using recursion.
 

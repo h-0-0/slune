@@ -1,6 +1,6 @@
 import unittest
 import os
-from slune.utils import find_directory_path, dict_to_strings
+from slune.utils import find_directory_path, dict_to_strings, find_csv_files, get_all_paths
 
 class TestFindDirectoryPath(unittest.TestCase):
 
@@ -73,3 +73,106 @@ class TestDictToStrings(unittest.TestCase):
         result = dict_to_strings(d)
         self.assertEqual(result, ['--arg1=1', '--arg2=2'])
     
+
+class TestFindCSVFiles(unittest.TestCase):
+
+    def setUp(self):
+        # Create a temporary directory with some CSV files for testing
+        self.test_dir = 'test_directory'
+        os.makedirs(self.test_dir, exist_ok=True)
+
+        # Creating some CSV files
+        self.csv_files = [
+            'file1.csv',
+            'file2.csv',
+            'subdir1/file3.csv',
+            'subdir2/file4.csv',
+            'subdir2/subdir3/file5.csv'
+        ]
+
+        for file in self.csv_files:
+            file_path = os.path.join(self.test_dir, file)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, 'w') as f:
+                f.write("Sample CSV content")
+
+    def tearDown(self):
+        # Clean up the temporary directory and files after testing
+        for root, dirs, files in os.walk(self.test_dir, topdown=False):
+            for name in files:
+                os.remove(os.path.join(root, name))
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))
+        os.rmdir(self.test_dir)
+
+    def test_find_csv_files(self):
+        # Test the find_csv_files function
+
+        # Call the function to get the result
+        result = find_csv_files(self.test_dir)
+
+        # Define the expected result based on the files we created
+        expected_result = [
+            os.path.join(self.test_dir, file) for file in self.csv_files
+        ]
+
+        # Sort both lists for comparison, as the order might not be guaranteed
+        result.sort()
+        expected_result.sort()
+
+        # Assert that the result matches the expected result
+        self.assertEqual(result, expected_result)
+
+
+class TestGetAllPaths(unittest.TestCase):
+
+    def setUp(self):
+        # Create a temporary directory with some CSV files for testing
+        self.test_dir = 'test_directory'
+        os.makedirs(self.test_dir, exist_ok=True)
+
+        # Creating some CSV files with specific subdirectory paths
+        self.csv_files = [
+            'dir1/file1.csv',
+            'dir2/file2.csv',
+            'dir1/subdir1/file3.csv',
+            'dir2/subdir2/file4.csv',
+            'dir2/subdir2/subdir3/file5.csv'
+        ]
+
+        for file in self.csv_files:
+            file_path = os.path.join(self.test_dir, file)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            with open(file_path, 'w') as f:
+                f.write("Sample CSV content")
+
+    def tearDown(self):
+        # Clean up the temporary directory and files after testing
+        for root, dirs, files in os.walk(self.test_dir, topdown=False):
+            for name in files:
+                os.remove(os.path.join(root, name))
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))
+        os.rmdir(self.test_dir)
+
+    def test_get_all_paths(self):
+        # Test the get_all_paths function
+
+        # Call the function to get the result
+        result = get_all_paths(['dir1', 'subdir1'], self.test_dir)
+
+        # Define the expected result based on the files we created
+        expected_result = [
+            os.path.join(self.test_dir, 'dir1/subdir1/file3.csv')
+        ]
+
+        # Sort both lists for comparison, as the order might not be guaranteed
+        result.sort()
+        expected_result.sort()
+
+        # Assert that the result matches the expected result
+        self.assertEqual(result, expected_result)
+
+
+if __name__ == '__main__':
+    unittest.main()

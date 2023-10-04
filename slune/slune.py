@@ -2,7 +2,6 @@ from argparse import ArgumentParser
 import subprocess
 import sys
 
-from slune.base import Slog
 from slune.savers import SaverCsv
 from slune.loggers import LoggerDefault
 
@@ -71,10 +70,7 @@ def garg(args, arg_names):
     else:
         return single_garg(arg_names)
 
-def get_slogcsv(params):
-    """
-    Creates a Slog object from the SaverCsv and LoggerDefault classes.
-    """
-    return Slog(LoggerDefault(), SaverCsv(params))
+def get_csv_slog(params, root_directory='.'):
+    return SaverCsv(LoggerDefault(), params, root_directory=root_directory)
 
 # TODO: add functions for reading results

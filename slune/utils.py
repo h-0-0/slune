@@ -54,3 +54,33 @@ def dict_to_strings(d):
         else:
             out.append('--{}={}'.format(key, value))
     return out
+
+def find_csv_files(root_directory='.'):
+    """
+    Recursively finds all csv files in all subdirectories of the root directory and returns their paths.
+    Args:
+        - root_directory (string): Path to the root directory to be searched, default is current working directory.
+    Returns:
+        - csv_files (list): List of strings containing the paths to all csv files found.
+    """
+    csv_files = []
+    for root, dirs, files in os.walk(root_directory):
+        for file in files:
+            if file.endswith('.csv'):
+                csv_files.append(os.path.join(root, file))
+    return csv_files
+
+def get_all_paths(params, root_directory='.'):
+    """
+    Finds all paths of csv files in all subdirectories of the root directory that have a directory in their path matching one of each of all the parameters given.
+    Args:
+        - params (list): List of strings containing the arguments used, in form ["--argument_name=argument_value", ...].
+        - root_directory (string): Path to the root directory to be searched, default is current working directory.
+    """
+    all_csv = find_csv_files(root_directory)
+    matches = []
+    for csv in all_csv:
+        path = csv.split('/')
+        if all([p in path for p in params]):
+            matches.append(csv)
+    return matches

@@ -1,16 +1,20 @@
 import os 
 import pandas as pd
-from slune.utils import find_directory_path
+from slune.utils import find_directory_path, get_all_paths
+from slune.base import BaseSaver, BaseLogger
+from typing import List,  Optional, Type
 
-class SaverCsv():
+class SaverCsv(BaseSaver):
     """
     Saves the results of each run in a CSV file in a hierarchical directory structure based on argument names.
     """
-    def __init__(self, params, root_dir='./tuning_results'):
+    def __init__(self, logger_instance: BaseLogger, params: List[str] = None, root_dir: Optional[str] ='./tuning_results'):
+        super(SaverCsv, self).__init__(logger_instance)
         self.root_dir = root_dir
-        self.current_path = self.get_path(params)
+        if params != None:
+            self.current_path = self.get_path(params)
     
-    def strip_params(self, params):
+    def strip_params(self, params: List[str]):
         """
         Strips the argument names from the arguments given by args.
         eg. ["--argument_name=argument_value", ...] -> ["--argument_name=", ...]
@@ -18,7 +22,7 @@ class SaverCsv():
         """
         return [p.split('=')[0].strip() for p in params]
 
-    def get_match(self, params):
+    def get_match(self, params: List[str]):
         """
         Searches the root directory for a directory tree that matches the parameters given.
         If only partial matches are found, returns the deepest matching directory with the missing parameters appended.
@@ -42,13 +46,14 @@ class SaverCsv():
             match = os.path.join(*match)
         return match
 
-    def get_path(self, params):
+    def get_path(self, params: List[str]):
         """
         Creates a path using the parameters by checking existing directories in the root directory.
         Check get_match for how we create the path, we then check if results files for this path already exist,
         if they do we increment the number of the results file name that we will use.
         TODO: Add option to dictate order of parameters in directory structure.
         TODO: Return warnings if there exist multiple paths that match the parameters but in a different order, or paths that don't go as deep as others.
+        TODO: Should use same directory if number equal but string not, eg. 1 and 1.0
         Args:
             - params (list): List of strings containing the arguments used, in form ["--argument_name=argument_value", ...].
         """
@@ -76,16 +81,56 @@ class SaverCsv():
         csv_file_path = os.path.join(dir_path, f'results_{csv_file_number}.csv')
         return csv_file_path
 
-    def save_collated(self, results):
-        # We add results onto the end of the current results in the csv file if it already exists
-        # if not then we create a new csv file and save the results there
+    def save_collated(self, results: pd.DataFrame):
+        """
+        We add results onto the end of the current results in the csv file if it already exists,
+        if not then we create a new csv file and save the results there
+        """
+        # If path does not exist, create it
+        # Remove the csv file name from the path
+        dir_path = self.current_path.split('/')[:-1]
+        dir_path = '/'.join(dir_path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+        # If csv file already exists, append results to the end
         if os.path.exists(self.current_path):
             results = pd.concat([pd.read_csv(self.current_path), results])
             results.to_csv(self.current_path, mode='w', index=False)
+        # If csv file does not exist, create it
         else:
             results.to_csv(self.current_path, index=False)
         
-    def read(self, *args, **kwargs):
-        # TODO: implement this function
-        raise NotImplementedError
+    def read(self, params: List[str], metric_name: str, min_max: str ='max'):
+        """
+        Finds the min/max value of a metric from all csv files in the root directory that match the parameters given.
+        Args:
+            - params (list): List of strings containing the arguments used, in form ["--argument_name=argument_value", ...].
+            - metric_name (string): Name of the metric to be read.
+            - min_max (string): Whether to read the minimum or maximum value of the metric, default is 'max'.
+        Returns:
+            - min_max_params (list): List of strings containing the arguments used to get the min/max value of the metric.
+            - min_max_value (float): Minimum or maximum value of the metric.
+        """
+        #  Get all paths that match the parameters given
+        paths = get_all_paths(params, root_directory=self.root_dir)
+        # Read the metric from each path
+        values = {}
+        for path in paths:
+            df = pd.read_csv(path)
+            values[path] = self.read_log(df, metric_name, min_max)
+        # Get the key of the min/max value
+        if min_max == 'min':
+            min_max_params = min(values, key=values.get)
+        elif min_max == 'max':
+            min_max_params = max(values, key=values.get)
+        else:
+            raise ValueError(f"min_max must be 'min' or 'max', got {min_max}")
+        # Find the min/max value of the metric from the key
+        min_max_value = values[min_max_params]
+        # Format the path into a list of arguments
+        min_max_params = min_max_params.replace(self.root_dir, '')
+        if min_max_params.startswith('/'):
+            min_max_params = min_max_params[1:]
+        min_max_params = min_max_params.split('/')
+        return min_max_params, min_max_value       
 
