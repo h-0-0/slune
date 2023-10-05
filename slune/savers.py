@@ -81,7 +81,7 @@ class SaverCsv(BaseSaver):
         csv_file_path = os.path.join(dir_path, f'results_{csv_file_number}.csv')
         return csv_file_path
 
-    def save_collated(self, results: pd.DataFrame):
+    def save_collated_from_results(self, results: pd.DataFrame):
         """
         We add results onto the end of the current results in the csv file if it already exists,
         if not then we create a new csv file and save the results there
@@ -99,6 +99,9 @@ class SaverCsv(BaseSaver):
         # If csv file does not exist, create it
         else:
             results.to_csv(self.current_path, index=False)
+
+    def save_collated(self):
+        return self.save_collated_from_results(self.logger.results)
         
     def read(self, params: List[str], metric_name: str, min_max: str ='max'):
         """

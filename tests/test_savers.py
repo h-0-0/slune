@@ -93,7 +93,7 @@ class TestSaverCsv(unittest.TestCase):
         # Create a data frame with some results
         results = pd.DataFrame({'a': [1,2,3], 'b': [4,5,6]})
         # Save the results
-        saver.save_collated(results)
+        saver.save_collated_from_results(results)
         # Check if the results were saved correctly
         read_results = pd.read_csv(os.path.join(self.test_dir, "--folder1=0.1/--folder2=0.2/--folder3=0.3/results_1.csv"))
         self.assertEqual(read_results.shape, (3,2))
@@ -104,7 +104,7 @@ class TestSaverCsv(unittest.TestCase):
         # Create another data frame with more results
         results = pd.DataFrame({'a': [7,8,9], 'd': [10,11,12]})
         # Save the results
-        saver.save_collated(results)
+        saver.save_collated_from_results(results)
         # Check if the results were saved correctly
         read_results = pd.read_csv(os.path.join(self.test_dir, "--folder1=0.1/--folder2=0.2/--folder3=0.3/results_1.csv"))
         results = pd.concat([pd.DataFrame({'a': [1,2,3], 'b': [4,5,6]}), results], ignore_index=True)
@@ -122,7 +122,7 @@ class TestSaverCsv(unittest.TestCase):
         # Create a data frame with some results
         results = pd.DataFrame({'a': [1,2,3], 'b': [4,5,6]})
         # Save the results
-        saver.save_collated(results)
+        saver.save_collated_from_results(results)
         # Check if the results were saved correctly
         read_results = pd.read_csv(os.path.join(self.test_dir, "--folder1=0.01/--folder2=0.02/--folder3=0.03/results_0.csv"))
         self.assertEqual(read_results.shape, (3,2))
