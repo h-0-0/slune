@@ -5,6 +5,13 @@ from slune.utils import find_directory_path, dict_to_strings, find_csv_files, ge
 class TestFindDirectoryPath(unittest.TestCase):
 
     def setUp(self):
+        # Delete the test directory and all contents if it already exists
+        if os.path.exists('test_directory'):
+            for root, dirs, files in os.walk('test_directory', topdown=False):
+                for name in files:
+                    os.remove(os.path.join(root, name))
+                for name in dirs:
+                    os.rmdir(os.path.join(root, name))
         # Create a temporary directory structure for testing
         self.test_dir = 'test_directory'
         os.makedirs(os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', '--folder3=0.3'))

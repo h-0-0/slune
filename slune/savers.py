@@ -3,6 +3,7 @@ import pandas as pd
 from slune.utils import find_directory_path, get_all_paths
 from slune.base import BaseSaver, BaseLogger
 from typing import List,  Optional, Type
+import logging
 
 class SaverCsv(BaseSaver):
     """
@@ -31,19 +32,22 @@ class SaverCsv(BaseSaver):
         # First check if there is a directory with path matching some subset of the arguments
         stripped_params = [p.split('=')[0].strip() +'=' for p in params] # Strip the params of whitespace and everything after the '='
         match = find_directory_path(stripped_params, root_directory=self.root_dir)
-        # Check which arguments are missing from the path
-        missing_params = [[p for p in params if sp in p][0] for sp in stripped_params if sp not in match]
-        # Now we add back in the values we stripped out
-        if not (match == self.root_dir):
-            match = match.split('/')
-            match = [match[0]] + [[p for p in params if m in p][0] for m in match[1:]]
-            match = '/'.join(match)
+        # Add on missing parameters
+        if match == self.root_dir:
+            match = "/".join(stripped_params)
         else:
-            match = match.split('/')
-        # If there are missing arguments, add them to the path
-        if len(missing_params) > 0:
-            match = match + missing_params
-            match = os.path.join(*match)
+            missing_params = [p for p in stripped_params if p not in match]
+            match = match + "/".join(missing_params)
+        # Take the root directory out of the match
+        match = match.replace(self.root_dir, '')
+        if match.startswith('/'):
+            match = match[1:]
+        # Now we add back in the values we stripped out
+        match = match.split('/')
+        match = [[p for p in params if m in p][0] for m in match]
+        # Add in the root directory
+        match = [self.root_dir] + match
+        match = '/'.join(match)
         return match
 
     def get_path(self, params: List[str]):

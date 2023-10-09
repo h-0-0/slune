@@ -6,6 +6,14 @@ from slune.loggers import LoggerDefault
 
 class TestSaverCsv(unittest.TestCase):
     def setUp(self):
+        # Check if the test directory already exists, if it does remove it and all its contents
+        if os.path.isdir('test_directory'):
+            for root, dirs, files in os.walk('test_directory', topdown=False):
+                for name in files:
+                    os.remove(os.path.join(root, name))
+                for name in dirs:
+                    os.rmdir(os.path.join(root, name))
+            os.rmdir('test_directory')
         # Create a temporary directory for testing
         self.test_dir = 'test_directory'
         os.makedirs(os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', '--folder3=0.3'))
@@ -136,7 +144,22 @@ class TestSaverCsv(unittest.TestCase):
         os.rmdir(os.path.join(self.test_dir, '--folder1=0.01', '--folder2=0.02'))
         os.rmdir(os.path.join(self.test_dir, '--folder1=0.01'))
         
-# TODO: add tests for root_dir that has '/'s in it
+    def test_root_dir_forwardslash(self):
+        # Create a SaverCsv instance
+        saver = SaverCsv(LoggerDefault(), ["--folder3=0.3", "--folder2=0.2"], root_dir=self.test_dir+'/--folder1=0.1')
+        # Create a data frame with some results
+        results = pd.DataFrame({'a': [1,2,3], 'b': [4,5,6]})
+        # Save the results
+        saver.save_collated_from_results(results)
+        # Check if the results were saved correctly
+        read_results = pd.read_csv(os.path.join(self.test_dir, "--folder1=0.1/--folder2=0.2/--folder3=0.3/results_1.csv"))
+        self.assertEqual(read_results.shape, (3,2))
+        self.assertEqual(results.columns.tolist(), read_results.columns.tolist())
+        read_values = [x for x in read_results.values.tolist() if str(x) != 'nan']
+        values = [x for x in results.values.tolist() if str(x) != 'nan']
+        self.assertEqual(values, read_values)
+        # Remove the results file
+        os.remove(os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', '--folder3=0.3', 'results_1.csv'))
 
 class TestSaverCsvReadMethod(unittest.TestCase):
 

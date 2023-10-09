@@ -10,7 +10,7 @@ Currently very much in early stages, first things still to do:
 
 - Refine package structure and sort out github actions like test coverage, running tests etc.
 - Get Searcher to check which tunings have been done and which haven't and only submit the ones that haven't been done yet. Depending on a flag, ie. if you want to re-run a tuning you can set a flag to re-run all tunings.
-- Add more tests and documentation.
+- Add more tests (including integration tests) and documentation.
 - Auto sbatch job naming and job output naming.
 - Auto save when finished a tuning run.
 - Add interfacing with SLURM to check for and re-submit failed jobs etc. 

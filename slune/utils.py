@@ -3,14 +3,14 @@ import os
 def find_directory_path(strings, root_directory='.'):
     """
     Searches the root directory for a path of directories that matches the strings given in any order.
-    If only a partial match is found, returns the deepest matching directory with the missing strings appended.
-    If no matches are found returns the strings as a path.
+    If only a partial match is found, returns the deepest matching path.
+    If no matches are found returns root_directory.
     Args:
         - strings (list): List of strings to be matched in any order. Each string in list must be in the form '--string='.
         - root_directory (string): Path to the root directory to be searched, default is current working directory.
     # TODO: could probably optimize this function
     """
-    def _find_directory_path(strings, curr_root, first_call=False):
+    def _find_directory_path(curr_strings, curr_root, first_call=False):
         # Get list of directories in root directory
         dir_list = os.listdir(curr_root)
         # Get substring up to and including '=' for each directory name in dir_list, and strip whitespace
@@ -18,7 +18,7 @@ def find_directory_path(strings, root_directory='.'):
         # Get rid of duplicates
         stripped_dir_list = list(set(stripped_dir_list))
         # Check if any of the strings are in the list of directories
-        for string in strings:
+        for string in curr_strings:
             if string in stripped_dir_list:
                 # If a string is found it means that at the current root there is a directory starting "--string="
                 # we now want to find all directories in the root directory that start with "--string=" and search them recursively
@@ -27,7 +27,7 @@ def find_directory_path(strings, root_directory='.'):
                 # Recursively search each directory starting with string
                 paths = []
                 for d in dir_list:
-                    paths.append(_find_directory_path(strings, os.path.join(curr_root, d)))
+                    paths.append(_find_directory_path(curr_strings, os.path.join(curr_root, d)))
                 # Return the deepest directory found, ie. most /'s in path
                 return max(paths, key=lambda x: x.count('/'))
         # If no strings are found, return the root directory
