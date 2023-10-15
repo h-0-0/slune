@@ -37,7 +37,7 @@ class SaverCsv(BaseSaver):
             match = "/".join(stripped_params)
         else:
             missing_params = [p for p in stripped_params if p not in match]
-            match = match + "/".join(missing_params)
+            match = match + '/' + '/'.join(missing_params)
         # Take the root directory out of the match
         match = match.replace(self.root_dir, '')
         if match.startswith('/'):

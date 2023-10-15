@@ -41,7 +41,7 @@ class TestSaverCsv(unittest.TestCase):
 
     def test_get_match_full_match(self):
         # Create a SaverCsv instance
-        saver = SaverCsv(LoggerDefault(), ["--folder3=0.3", "--folder2=0.2", "--folder1=0.1"], root_dir=self.test_dir)
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder3=0.3", "--folder2=0.2", "--folder1=0.1"])
@@ -49,15 +49,23 @@ class TestSaverCsv(unittest.TestCase):
 
     def test_get_match_partial_match(self):
         # Create a SaverCsv instance
-        saver = SaverCsv(LoggerDefault(), ["--folder2=0.2", "--folder1=0.1"], root_dir=self.test_dir)
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder2=0.2", "--folder1=0.1"])
         self.assertEqual(matching_dir, os.path.join(self.test_dir, "--folder1=0.1/--folder2=0.2"))
 
+    def test_get_match_partial_match_more_params(self):
+        # Create a SaverCsv instance
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+
+        # Test if get_match finds correct match and builds correct directory path using the parameters
+        matching_dir = saver.get_match(["--folder1=0.1", "--folder6=0.6", "--folder5=0.5", "--folder7=0.7"])
+        self.assertEqual(matching_dir, os.path.join(self.test_dir, "--folder1=0.1/--folder5=0.5/--folder6=0.6/--folder7=0.7"))
+
     def test_get_match_different_values(self):
         # Create a SaverCsv instance
-        saver = SaverCsv(LoggerDefault(), ["--folder2=2.2", "--folder1=1.1"], root_dir=self.test_dir)
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder2=2.2", "--folder1=1.1"])
@@ -65,7 +73,7 @@ class TestSaverCsv(unittest.TestCase):
 
     def test_get_match_too_deep(self):
         # Create a SaverCsv instance
-        saver = SaverCsv(LoggerDefault(), ["--folder2=0.2", "--folder3=0.3"], root_dir=self.test_dir)
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder2=0.2", "--folder3=0.3"])
@@ -73,7 +81,7 @@ class TestSaverCsv(unittest.TestCase):
 
     def test_get_match_no_match(self):
         # Create a SaverCsv instance
-        saver = SaverCsv(LoggerDefault(), ["--folder_not_there=0", "--folder_also_not_there=0.1"], root_dir=self.test_dir)
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder_not_there=0", "--folder_also_not_there=0.1"])
@@ -81,18 +89,18 @@ class TestSaverCsv(unittest.TestCase):
 
     def test_get_path_no_results(self):
         # Create a SaverCsv instance
-        saver = SaverCsv(LoggerDefault(), ["--folder5=0.5","--folder1=0.1", "--folder6=0.6"], root_dir=self.test_dir)
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
 
         # Test if get_path gets the correct path
-        path = saver.current_path
+        path = saver.get_path(["--folder5=0.5","--folder1=0.1", "--folder6=0.6"])
         self.assertEqual(path, os.path.join(self.test_dir, "--folder1=0.1/--folder5=0.5/--folder6=0.6/results_0.csv"))
 
     def test_get_path_already_results(self):
         # Create a SaverCsv instance
-        saver = SaverCsv(LoggerDefault(), ["--folder3=0.3", "--folder2=0.2", "--folder1=0.1"], root_dir=self.test_dir)
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
 
         # Test if get_path gets the correct path
-        path = saver.current_path
+        path = saver.get_path(["--folder3=0.3", "--folder2=0.2", "--folder1=0.1"]) 
         self.assertEqual(path, os.path.join(self.test_dir, "--folder1=0.1/--folder2=0.2/--folder3=0.3/results_1.csv"))
 
     def test_save_collated(self):
@@ -160,6 +168,8 @@ class TestSaverCsv(unittest.TestCase):
         self.assertEqual(values, read_values)
         # Remove the results file
         os.remove(os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', '--folder3=0.3', 'results_1.csv'))
+
+# TODO: What if two of same parameter given or in path?
 
 class TestSaverCsvReadMethod(unittest.TestCase):
 
