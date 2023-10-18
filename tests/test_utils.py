@@ -1,6 +1,6 @@
 import unittest
 import os
-from slune.utils import find_directory_path, dict_to_strings, find_csv_files, get_all_paths
+from slune.utils import find_directory_path, dict_to_strings, find_csv_files, get_all_paths, get_numeric_equiv
 
 class TestFindDirectoryPath(unittest.TestCase):
 
@@ -71,6 +71,61 @@ class TestFindDirectoryPath(unittest.TestCase):
         search_strings = ['--folder_not_there=']
         result = find_directory_path(search_strings, root_directory=self.test_dir + '/--folder1=0.1' + '/--folder2=0.2' + '/another_folder')
         self.assertEqual(result, os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', 'another_folder'))
+
+
+class TestNumericEquiv(unittest.TestCase):
+    def setUp(self):
+        self.test_dir = 'test_directory'
+        os.makedirs(os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3=3'))
+    
+    def tearDown(self):
+        os.rmdir(os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3=3'))
+        os.rmdir(os.path.join(self.test_dir, '--dir1=1', '--dir2=2'))
+        os.rmdir(os.path.join(self.test_dir, '--dir1=1'))
+        os.rmdir(self.test_dir)
+
+    def test_get_numeric_equiv_full_path_exist(self):
+        path = '--dir1=1/--dir2=2'
+        expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2')
+        self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
+
+    def test_get_numeric_equiv_path_longer_than_existing(self):
+        path = '--dir1=1/--dir2=2/--dir4=4'
+        expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir4=4')
+        self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
+
+    def test_get_numeric_equiv_full_path_exist_diff_numeric_value(self):
+        path = '--dir1=1/--dir2=2.00'
+        expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2')
+        self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
+
+    def test_get_numeric_equiv_none_of_path_exist(self):
+        path = '--dir5=5/--dir6=6'
+        expected =  os.path.join(self.test_dir, '--dir5=5', '--dir6=6')
+        self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
+
+    def test_get_numeric_equiv_numeric_equiv_exist_then_none(self):
+        path = '--dir1=1.0/--dir4=4'
+        expected = os.path.join(self.test_dir, '--dir1=1', '--dir4=4')
+        self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
+    
+    def test_get_numeric_equiv_exists_then_numeric_equiv(self):
+        path = '--dir1=1/--dir2=2.0'
+        expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2')
+        self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
+
+        path = '--dir1=1/--dir2=2.0/--dir3=3'
+        expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3=3')
+        self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
+    
+    def test_get_numerc_equiv_numeric_equiv_then_exists(self):
+        path = '--dir1=1.0/--dir2=2'
+        expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2')
+        self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
+
+        path = '--dir1=1.0/--dir2=2/--dir3=3'
+        expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3=3')
+        self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
 
 
 class TestDictToStrings(unittest.TestCase):

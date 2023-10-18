@@ -87,6 +87,34 @@ class TestSaverCsv(unittest.TestCase):
         matching_dir = saver.get_match(["--folder_not_there=0", "--folder_also_not_there=0.1"])
         self.assertEqual(matching_dir, os.path.join(self.test_dir, "--folder_not_there=0/--folder_also_not_there=0.1"))
 
+    def test_get_match_duplicate_params(self):
+        # Create a SaverCsv instance
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+
+        # Test if get_match returns an error if there are duplicate parameters
+        with self.assertRaises(ValueError):
+            saver.get_match(["--folder1=0.1", "--folder1=0.2"])
+
+    def test_get_match_existing(self):
+        # Arrange
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+        params = ['--folder2=0.20', '--folder1=0.1', '--folder3=0.3']
+        expected_path = os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', '--folder3=0.3')
+
+        # Act
+        actual_path = saver.get_match(params)
+
+        # Assert
+        self.assertEqual(expected_path, actual_path)
+
+    def test_get_path_duplicate_params(self):
+        # Create a SaverCsv instance
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+
+        # Test if get_path returns an error if there are duplicate parameters
+        with self.assertRaises(ValueError):
+            saver.get_path(["--folder1=0.1", "--folder1=0.2"])
+
     def test_get_path_no_results(self):
         # Create a SaverCsv instance
         saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
@@ -168,8 +196,6 @@ class TestSaverCsv(unittest.TestCase):
         self.assertEqual(values, read_values)
         # Remove the results file
         os.remove(os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', '--folder3=0.3', 'results_1.csv'))
-
-# TODO: What if two of same parameter given or in path?
 
 class TestSaverCsvReadMethod(unittest.TestCase):
 

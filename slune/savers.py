@@ -1,6 +1,6 @@
 import os 
 import pandas as pd
-from slune.utils import find_directory_path, get_all_paths
+from slune.utils import find_directory_path, get_all_paths, get_numeric_equiv
 from slune.base import BaseSaver, BaseLogger
 from typing import List,  Optional, Type
 import logging
@@ -31,13 +31,16 @@ class SaverCsv(BaseSaver):
         """
         # First check if there is a directory with path matching some subset of the arguments
         stripped_params = [p.split('=')[0].strip() +'=' for p in params] # Strip the params of whitespace and everything after the '='
+        if len(set(stripped_params)) != len(stripped_params):
+            raise ValueError(f"Duplicate parameters found in {stripped_params}")
         match = find_directory_path(stripped_params, root_directory=self.root_dir)
         # Add on missing parameters
         if match == self.root_dir:
             match = "/".join(stripped_params)
         else:
             missing_params = [p for p in stripped_params if p not in match]
-            match = match + '/' + '/'.join(missing_params)
+            if missing_params != []:
+                match = match + '/' + '/'.join(missing_params)
         # Take the root directory out of the match
         match = match.replace(self.root_dir, '')
         if match.startswith('/'):
@@ -45,9 +48,8 @@ class SaverCsv(BaseSaver):
         # Now we add back in the values we stripped out
         match = match.split('/')
         match = [[p for p in params if m in p][0] for m in match]
-        # Add in the root directory
-        match = [self.root_dir] + match
-        match = '/'.join(match)
+        # Check if there is an existing path with the same numerical values, if so use that instead
+        match = get_numeric_equiv("/".join(match), root_directory=self.root_dir)
         return match
 
     def get_path(self, params: List[str]):
@@ -57,7 +59,6 @@ class SaverCsv(BaseSaver):
         if they do we increment the number of the results file name that we will use.
         TODO: Add option to dictate order of parameters in directory structure.
         TODO: Return warnings if there exist multiple paths that match the parameters but in a different order, or paths that don't go as deep as others.
-        TODO: Should use same directory if number equal but string not, eg. 1 and 1.0
         Args:
             - params (list): List of strings containing the arguments used, in form ["--argument_name=argument_value", ...].
         """

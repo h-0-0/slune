@@ -7,11 +7,11 @@ So early I haven't even written the docs yet! Will be adding a quick example her
 ## Coming soon
 Currently very much in early stages, first things still to do:
 - What happens if multiple results files? reading from them and not rerunning jobs already done.
-- Emails for when tuning done?
+    - Get Searcher to check which tunings have been done and which haven't and only submit the ones that haven't been done yet. Depending on a flag, ie. if you want to re-run a tuning you can set a flag to re-run all tunings.
 
 - Refine package structure and sort out github actions like test coverage, running tests etc.
-- Get Searcher to check which tunings have been done and which haven't and only submit the ones that haven't been done yet. Depending on a flag, ie. if you want to re-run a tuning you can set a flag to re-run all tunings.
 - Add more tests (including integration tests) and documentation.
+- Emails for when tuning done?
 - Auto sbatch job naming and job output naming.
 - Auto save when finished a tuning run.
 - Add interfacing with SLURM to check for and re-submit failed jobs etc. 
@@ -28,7 +28,4 @@ To install latest dev version use:
 ```bash
 # With https
 pip install "git+https://github.com/h-aze/slune.git#egg=slune-lib"
-# TODO: don't think this is working, need to put working version of this
-# or with SSH
-pip install "git+ssh://@github.com:h-aze/slune.git#egg=slune-lib"
 ```
