@@ -14,12 +14,11 @@ def find_directory_path(strings, root_directory='.'):
         dir_list = [entry.name for entry in os.scandir(curr_root) if entry.is_dir()]
         stripped_dir_list = [d.split('=')[0].strip() +"=" for d in dir_list]
         stripped_dir_list = list(set(stripped_dir_list))
-
         for string in curr_strings:
             if string in stripped_dir_list:
                 dir_list = [d for d in dir_list if d.startswith(string)]
                 for d in dir_list:
-                    new_depth, new_path = _find_directory_path(curr_strings, curr_root + '/' + d, depth + 1, max_depth, max_path)
+                    new_depth, new_path = _find_directory_path([s for s in curr_strings if s != string], curr_root + '/' + d, depth + 1, max_depth, max_path)
                     if new_depth > max_depth:
                         max_depth, max_path = new_depth, new_path
         if depth > max_depth:

@@ -72,6 +72,12 @@ class TestFindDirectoryPath(unittest.TestCase):
         result = find_directory_path(search_strings, root_directory=self.test_dir + '/--folder1=0.1' + '/--folder2=0.2' + '/another_folder')
         self.assertEqual(result, os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', 'another_folder'))
 
+    def test_existing_duplicate_dirs(self):
+        os.makedirs(os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', '--folder2=2.2'))
+        search_strings = ['--folder1=', '--folder2=']
+        result = find_directory_path(search_strings, root_directory=self.test_dir)
+        os.rmdir(os.path.join(self.test_dir, '--folder1=0.1', '--folder2=0.2', '--folder2=2.2'))
+        self.assertEqual(result, os.path.join(self.test_dir, '--folder1=', '--folder2='))
 
 class TestNumericEquiv(unittest.TestCase):
     def setUp(self):
