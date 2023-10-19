@@ -70,7 +70,7 @@ def garg(args, arg_names):
     else:
         return single_garg(arg_names)
 
-def get_csv_slog(params, root_dir='slune_results'):
-    return SaverCsv(LoggerDefault(), params, root_dir=root_dir)
+def get_csv_slog(params = None, root_dir='slune_results'):
+    return SaverCsv(LoggerDefault(), params = params, root_dir=root_dir)
 
 # TODO: add functions for reading results

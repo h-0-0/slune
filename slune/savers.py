@@ -3,11 +3,14 @@ import pandas as pd
 from slune.utils import find_directory_path, get_all_paths, get_numeric_equiv
 from slune.base import BaseSaver, BaseLogger
 from typing import List,  Optional, Type
-import logging
+import random
+import time
 
 class SaverCsv(BaseSaver):
     """
+    TODO
     Saves the results of each run in a CSV file in a hierarchical directory structure based on argument names.
+    Handles parallel runs by waiting a random time
     """
     def __init__(self, logger_instance: BaseLogger, params: List[str] = None, root_dir: Optional[str] ='./tuning_results'):
         super(SaverCsv, self).__init__(logger_instance)
@@ -64,6 +67,7 @@ class SaverCsv(BaseSaver):
         """
         # Check if root directory exists, if not create it
         if not os.path.exists(self.root_dir):
+            time.sleep(random.random()) # Wait a random amount of time under 1 second to avoid multiple processes creating the same directory
             os.makedirs(self.root_dir)
         # Get path of directory where we should store our csv of results
         dir_path = self.get_match(params)
@@ -96,6 +100,7 @@ class SaverCsv(BaseSaver):
         dir_path = self.current_path.split('/')[:-1]
         dir_path = '/'.join(dir_path)
         if not os.path.exists(dir_path):
+            time.sleep(random.random()) # Wait a random amount of time under 1 second to avoid multiple processes creating the same directory
             os.makedirs(dir_path)
         # If csv file already exists, append results to the end
         if os.path.exists(self.current_path):

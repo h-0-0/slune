@@ -6,10 +6,11 @@ So early I haven't even written the docs yet! Will be adding a quick example her
 
 ## Coming soon
 Currently very much in early stages, first things still to do:
+- Need to create root directory before submitting job scripts? how do I stop different scripts creating directories at same time and resulting errors?
 - What happens if multiple results files? reading from them and not rerunning jobs already done.
     - Get Searcher to check which tunings have been done and which haven't and only submit the ones that haven't been done yet. Depending on a flag, ie. if you want to re-run a tuning you can set a flag to re-run all tunings.
 
-- Refine package structure and sort out github actions like test coverage, running tests etc.
+- Refine package structure (should be able to import without specifiying file) and sort out github actions like test coverage, running tests etc.
 - Add more tests (including integration tests) and documentation.
 - Emails for when tuning done?
 - Auto sbatch job naming and job output naming.
