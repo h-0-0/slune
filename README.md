@@ -6,17 +6,17 @@ So early I haven't even written the docs yet! Will be adding a quick example her
 
 ## Coming soon
 Currently very much in early stages, first things still to do:
-- Need to create root directory before submitting job scripts? how do I stop different scripts creating directories at same time and resulting errors?
-- What happens if multiple results files? reading from them and not rerunning jobs already done.
-    - Get Searcher to check which tunings have been done and which haven't and only submit the ones that haven't been done yet. Depending on a flag, ie. if you want to re-run a tuning you can set a flag to re-run all tunings.
+- Be able to take average of multiple runs when reading 
 
 - Refine package structure (should be able to import without specifiying file) and sort out github actions like test coverage, running tests etc.
 - Add more tests (including integration tests) and documentation.
+
 - Emails for when tuning done?
-- Auto sbatch job naming and job output naming.
+- Auto sbatch job naming, job output naming and job output location saving.
 - Auto save when finished a tuning run.
 - Add interfacing with SLURM to check for and re-submit failed jobs etc. 
 - Cancelling submitted jobs quickly and easily.
+
 - Add some more subclasses for saving job results in different ways and for different tuning methods. 
 Although the idea for this package is to keep it ultra bare-bones and make it easy for the user to mod and add things themselves to their liking.
 

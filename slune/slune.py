@@ -17,7 +17,7 @@ def submit_job(sh_path, args):
     except subprocess.CalledProcessError as e:
         print(f"Error running sbatch: {e}")
 
-def sbatchit(script_path, template_path, searcher, cargs=[]):
+def sbatchit(script_path, template_path, searcher, cargs=[], slog=None):
     """
     Carries out hyper-parameter tuning by submitting a job for each set of hyper-parameters given by tune_control, 
     for each job runs the script stored at script_path with selected hyper-parameter values and the arguments given by cargs.
@@ -27,15 +27,18 @@ def sbatchit(script_path, template_path, searcher, cargs=[]):
 
         - template_path (string): Path to the template file used to create the sbatch script for each job.
 
+        - searcher (Searcher): Searcher object used to select hyper-parameter values for each job.
+
         - cargs (list): List of strings containing the arguments to be passed to the script for each job. 
                         Must be a list even if there is just one argument, default is empty list.
 
-        - tuning (Tuning): Tuning object used to select hyper-parameter values for each job.
+        - slog (Saver): Saver object (instantiated with a Logger object) used if we want to check if there are existing runs so we don't rerun.
+                        Don't give a Saver object if you want to rerun all jobs!
     """
+    if slog != None:
+        searcher.check_existing_runs(slog)
     # Create sbatch script for each job
-    for _ in range(len(searcher)):
-        # Get argument for this job
-        args = searcher.next_tune()
+    for args in searcher:
         # Submit job
         submit_job(template_path, [script_path] + cargs + args)
     print("Submitted all jobs!")
@@ -72,5 +75,3 @@ def garg(args, arg_names):
 
 def get_csv_slog(params = None, root_dir='slune_results'):
     return SaverCsv(LoggerDefault(), params = params, root_dir=root_dir)
-
-# TODO: add functions for reading results

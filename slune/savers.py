@@ -8,7 +8,6 @@ import time
 
 class SaverCsv(BaseSaver):
     """
-    TODO
     Saves the results of each run in a CSV file in a hierarchical directory structure based on argument names.
     Handles parallel runs by waiting a random time
     """
@@ -60,8 +59,6 @@ class SaverCsv(BaseSaver):
         Creates a path using the parameters by checking existing directories in the root directory.
         Check get_match for how we create the path, we then check if results files for this path already exist,
         if they do we increment the number of the results file name that we will use.
-        TODO: Add option to dictate order of parameters in directory structure.
-        TODO: Return warnings if there exist multiple paths that match the parameters but in a different order, or paths that don't go as deep as others.
         Args:
             - params (list): List of strings containing the arguments used, in form ["--argument_name=argument_value", ...].
         """
@@ -126,6 +123,8 @@ class SaverCsv(BaseSaver):
         """
         #  Get all paths that match the parameters given
         paths = get_all_paths(params, root_directory=self.root_dir)
+        if paths == []:
+            raise ValueError(f"No paths found matching {params}")
         # Read the metric from each path
         values = {}
         for path in paths:
@@ -147,3 +146,11 @@ class SaverCsv(BaseSaver):
         min_max_params = min_max_params.split('/')
         return min_max_params, min_max_value       
 
+    def exists(self, params: List[str]):
+        """
+        Checks if results already exist in storage, 
+        then returns integer indicating the number of runs that exist in storage for the given parameters. 
+        """
+        #  Get all paths that match the parameters given
+        paths = get_all_paths(params, root_directory=self.root_dir)
+        return len(paths)

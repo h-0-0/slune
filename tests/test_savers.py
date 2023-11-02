@@ -329,6 +329,39 @@ class TestSaverCsvReadMethod(unittest.TestCase):
         with self.assertRaises(KeyError):
             saver.read(params, 'c')
 
+    def test_exists_one_file(self):
+        # Arrange
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+        params = ['dir2', 'subdir2', 'subdir3', 'file5.csv']
+
+        # Act
+        result = saver.exists(params)
+
+        # Assert
+        self.assertEqual(result, 1)
+
+    def test_exists_multi_file(self):
+        # Arrange
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+        params = ['dir2']
+
+        # Act
+        result = saver.exists(params)
+
+        # Assert
+        self.assertEqual(result, 3)
+    
+    def test_exists_no_file(self):
+        # Arrange
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+        params = ['dir3']
+
+        # Act
+        result = saver.exists(params)
+
+        # Assert
+        self.assertEqual(result, 0)
+
 
 if __name__ == "__main__":
     unittest.main()

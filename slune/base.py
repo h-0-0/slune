@@ -24,6 +24,28 @@ class BaseSearcher(metaclass=abc.ABCMeta):
         """
         pass
 
+    @abc.abstractmethod
+    def check_existing_runs(self, *args, **kwargs):
+        """
+        Used to tell searcher to check if there are existing runs in storage, this will probably require giving a Saver object.
+        """
+        pass
+
+    def __iter__(self):
+        """
+        Makes the searcher iterable, so we can use it in a for loop.
+        """
+        return self
+    
+    def __next__(self):
+        """
+        Makes the searcher iterable, so we can use it in a for loop.
+        """
+        try:
+            return self.next_tune()
+        except:
+            raise StopIteration
+
 class BaseLogger(metaclass=abc.ABCMeta):
     """
     Base class for all loggers. Which should be subclassed to implement different logging algorithms.
@@ -73,5 +95,12 @@ class BaseSaver(metaclass=abc.ABCMeta):
     def read(self, *args, **kwargs):
         """
         Reads results from storage.
+        """
+        pass
+
+    @abc.abstractmethod
+    def exists(self, *args, **kwargs):
+        """
+        Checks if results already exist in storage, should return integer indicating the number of runs that exist in storage for the given parameters. 
         """
         pass

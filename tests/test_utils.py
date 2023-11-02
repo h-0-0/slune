@@ -223,9 +223,7 @@ class TestGetAllPaths(unittest.TestCase):
                 os.rmdir(os.path.join(root, name))
         os.rmdir(self.test_dir)
 
-    def test_get_all_paths(self):
-        # Test the get_all_paths function
-
+    def test_one_match(self):
         # Call the function to get the result
         result = get_all_paths(['dir1', 'subdir1'], self.test_dir)
 
@@ -240,7 +238,86 @@ class TestGetAllPaths(unittest.TestCase):
 
         # Assert that the result matches the expected result
         self.assertEqual(result, expected_result)
+    
+    def test_multi_match(self):
+        # Call the function to get the result
+        result = get_all_paths(['dir2', 'subdir2'], self.test_dir)
 
+        # Define the expected result based on the files we created
+        expected_result = [
+            os.path.join(self.test_dir, 'dir2/subdir2/file4.csv'),
+            os.path.join(self.test_dir, 'dir2/subdir2/subdir3/file5.csv')
+        ]
+
+        # Sort both lists for comparison, as the order might not be guaranteed
+        result.sort()
+        expected_result.sort()
+
+        # Assert that the result matches the expected result
+        self.assertEqual(result, expected_result)
+    
+    def test_depth(self):
+        # Call the function to get the result
+        result = get_all_paths(['dir1'], self.test_dir)
+
+        # Define the expected result based on the files we created
+        expected_result = [
+            os.path.join(self.test_dir, 'dir1/file1.csv'),
+            os.path.join(self.test_dir, 'dir1/subdir1/file3.csv')
+        ]
+
+        # Sort both lists for comparison, as the order might not be guaranteed
+        result.sort()
+        expected_result.sort()
+
+        # Assert that the result matches the expected result
+        self.assertEqual(result, expected_result)
+
+    def test_no_match(self):
+        # Call the function to get the result
+        result = get_all_paths(['dir3'], self.test_dir)
+
+        # Define the expected result based on the files we created
+        expected_result = []
+
+        # Sort both lists for comparison, as the order might not be guaranteed
+        result.sort()
+        expected_result.sort()
+
+        # Assert that the result matches the expected result
+        self.assertEqual(result, expected_result)
+
+    def test_params_deep(self):
+        # Call the function to get the result
+        result = get_all_paths(['subdir3'], self.test_dir)
+
+        # Define the expected result based on the files we created
+        expected_result = [
+            os.path.join(self.test_dir, 'dir2/subdir2/subdir3/file5.csv')
+        ]
+
+        # Sort both lists for comparison, as the order might not be guaranteed
+        result.sort()
+        expected_result.sort()
+
+        # Assert that the result matches the expected result
+        self.assertEqual(result, expected_result)
+    
+    def test_root_has_forwardslash(self):
+        # Call the function to get the result
+        result = get_all_paths(['subdir1'], self.test_dir + '/dir1')
+
+        # Define the expected result based on the files we created
+        expected_result = [
+            os.path.join(self.test_dir, 'dir1/subdir1/file3.csv')
+        ]
+
+        # Sort both lists for comparison, as the order might not be guaranteed
+        result.sort()
+        expected_result.sort()
+
+        # Assert that the result matches the expected result
+        self.assertEqual(result, expected_result)
 
 if __name__ == '__main__':
     unittest.main()
