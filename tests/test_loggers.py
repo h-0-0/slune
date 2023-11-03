@@ -62,7 +62,7 @@ class TestLoggerDefaultRead(unittest.TestCase):
         df = pd.DataFrame(data)
 
         # Test reading the minimum value of Metric1
-        result = self.logger.read_log(df, 'Metric1', min_max='min')
+        result = self.logger.read_log(df, 'Metric1', select_by='min')
         self.assertEqual(result, 1)
 
     def test_read_max_metric(self):
@@ -72,7 +72,7 @@ class TestLoggerDefaultRead(unittest.TestCase):
         df = pd.DataFrame(data)
 
         # Test reading the maximum value of Metric2
-        result = self.logger.read_log(df, 'Metric2', min_max='max')
+        result = self.logger.read_log(df, 'Metric2', select_by='max')
         self.assertEqual(result, 8)
 
     def test_invalid_metric_name(self):
@@ -83,7 +83,7 @@ class TestLoggerDefaultRead(unittest.TestCase):
 
         # Test providing an invalid metric name
         with self.assertRaises(KeyError):
-            self.logger.read_log(df, 'InvalidMetric', min_max='min')
+            self.logger.read_log(df, 'InvalidMetric', select_by='min')
 
     def test_invalid_min_max_argument(self):
         # Create a sample DataFrame
@@ -93,7 +93,7 @@ class TestLoggerDefaultRead(unittest.TestCase):
 
         # Test providing an invalid value for min_max argument
         with self.assertRaises(ValueError):
-            self.logger.read_log(df, 'Metric1', min_max='invalid_value')
+            self.logger.read_log(df, 'Metric1', select_by='invalid_value')
 
 
 if __name__ == '__main__':

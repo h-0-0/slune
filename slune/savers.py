@@ -110,16 +110,17 @@ class SaverCsv(BaseSaver):
     def save_collated(self):
         return self.save_collated_from_results(self.logger.results)
         
-    def read(self, params: List[str], metric_name: str, min_max: str ='max'):
+    def read(self, params: List[str], metric_name: str, select_by: str ='max', avg: bool =True):
         """
         Finds the min/max value of a metric from all csv files in the root directory that match the parameters given.
         Args:
             - params (list): List of strings containing the arguments used, in form ["--argument_name=argument_value", ...].
             - metric_name (string): Name of the metric to be read.
-            - min_max (string): Whether to read the minimum or maximum value of the metric, default is 'max'.
+            - select_by (string): How to select the 'best' value for the metric from a log file, currently can select by 'min' or 'max'.
+            - avg (bool): Whether to average the metric over all runs, default is True.
         Returns:
-            - min_max_params (list): List of strings containing the arguments used to get the min/max value of the metric.
-            - min_max_value (float): Minimum or maximum value of the metric.
+            - best_params (list): List of strings containing the arguments used to get the 'best' value of the metric (determined by select_by).
+            - best_value (float): Best value of the metric (determined by select_by).
         """
         #  Get all paths that match the parameters given
         paths = get_all_paths(params, root_directory=self.root_dir)
@@ -127,24 +128,36 @@ class SaverCsv(BaseSaver):
             raise ValueError(f"No paths found matching {params}")
         # Read the metric from each path
         values = {}
-        for path in paths:
-            df = pd.read_csv(path)
-            values[path] = self.read_log(df, metric_name, min_max)
-        # Get the key of the min/max value
-        if min_max == 'min':
-            min_max_params = min(values, key=values.get)
-        elif min_max == 'max':
-            min_max_params = max(values, key=values.get)
+        # Do averaging for different runs of same params if avg is True, otherwise just read the metric from each path
+        if avg:
+            paths_same_params = set(['/'.join(p.split('/')[:-1]) for p in paths])
+            for path in paths_same_params:
+                runs = get_all_paths(path.split('/'), root_directory=self.root_dir)
+                cumsum = 0
+                for r in runs:
+                    df = pd.read_csv(r)
+                    cumsum += self.read_log(df, metric_name, select_by)
+                avg_of_runs = cumsum / len(runs)
+                values[path] = avg_of_runs
         else:
-            raise ValueError(f"min_max must be 'min' or 'max', got {min_max}")
-        # Find the min/max value of the metric from the key
-        min_max_value = values[min_max_params]
+            for path in paths:
+                df = pd.read_csv(path)
+                values['/'.join(path.split('/')[:-1])] = self.read_log(df, metric_name, select_by)
+        # Get the key of the min/max value
+        if select_by == 'min':
+            best_params = min(values, key=values.get)
+        elif select_by == 'max':
+            best_params = max(values, key=values.get)
+        else:
+            raise ValueError(f"select_by must be 'min' or 'max', got {select_by}")
+        # Find the best value of the metric from the key
+        best_value = values[best_params]
         # Format the path into a list of arguments
-        min_max_params = min_max_params.replace(self.root_dir, '')
-        if min_max_params.startswith('/'):
-            min_max_params = min_max_params[1:]
-        min_max_params = min_max_params.split('/')
-        return min_max_params, min_max_value       
+        best_params = best_params.replace(self.root_dir, '')
+        if best_params.startswith('/'):
+            best_params = best_params[1:]
+        best_params = best_params.split('/')
+        return best_params, best_value       
 
     def exists(self, params: List[str]):
         """

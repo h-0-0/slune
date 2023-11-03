@@ -29,25 +29,25 @@ class LoggerDefault(BaseLogger):
         # Append metrics dataframe to results dataframe
         self.results = pd.concat([self.results, metrics_df], ignore_index=True)
     
-    def read_log(self, data_frame: pd.DataFrame, metric_name: str, min_max: str ='max'):
+    def read_log(self, data_frame: pd.DataFrame, metric_name: str, select_by: str ='max'):
         """
         Reads the minimum or maximum value of a metric from a data frame.
         Args:
             - data_frame (pd.DataFrame): Data frame containing the metric to be read.
             - metric_name (string): Name of the metric to be read.
-            - min_max (string): Whether to read the minimum or maximum value of the metric, default is 'max'.
+            - select_by (string): How to select the 'best' metric, currently can select by 'min' or 'max'.
         Returns:
             - value (float): Minimum or maximum value of the metric.
         """ 
         # Get the metric column
         metric_col = data_frame[metric_name]
         # Get the index of the minimum or maximum value
-        if min_max == 'max':
+        if select_by == 'max':
             index = metric_col.idxmax()
-        elif min_max == 'min':
+        elif select_by == 'min':
             index = metric_col.idxmin()
         else:
-            raise ValueError(f"min_max must be 'min' or 'max', got {min_max}")
+            raise ValueError(f"select_by must be 'min' or 'max', got {select_by}")
         # Get the value of the metric
         value = metric_col.iloc[index]
         return value

@@ -265,8 +265,8 @@ class TestSaverCsvReadMethod(unittest.TestCase):
         max_param_b, max_value_b = saver.read(params, 'b')
 
         # Perform assertions based on your expectations
-        self.assertEqual(max_param_a, ['dir1','subdir1','file3.csv'])
-        self.assertEqual(max_param_b, ['dir1','subdir1','file3.csv'])
+        self.assertEqual(max_param_a, ['dir1','subdir1'])
+        self.assertEqual(max_param_b, ['dir1','subdir1'])
         self.assertEqual(max_value_a, 5)
         self.assertEqual(max_value_b, 8)
     
@@ -277,12 +277,12 @@ class TestSaverCsvReadMethod(unittest.TestCase):
         saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
 
         # Call the read method to get min and max values
-        max_param_a, min_value_a = saver.read(params, 'a', min_max='min')
-        max_param_b, min_value_b = saver.read(params, 'b', min_max='min')
+        max_param_a, min_value_a = saver.read(params, 'a', select_by='min')
+        max_param_b, min_value_b = saver.read(params, 'b', select_by='min')
 
         # Perform assertions based on your expectations
-        self.assertEqual(max_param_a, ['dir1','subdir1','file3.csv'])
-        self.assertEqual(max_param_b, ['dir1','subdir1','file3.csv'])
+        self.assertEqual(max_param_a, ['dir1','subdir1'])
+        self.assertEqual(max_param_b, ['dir1','subdir1'])
         self.assertEqual(min_value_a, 3)
         self.assertEqual(min_value_b, 6)
 
@@ -306,7 +306,7 @@ class TestSaverCsvReadMethod(unittest.TestCase):
         param, value = saver.read(params, 'a')
 
         # Check results are as expected
-        self.assertEqual(param, ['dir2','subdir2','subdir3','file5.csv'])
+        self.assertEqual(param, ['dir2','subdir2','subdir3'])
         self.assertEqual(value, 7)
     
     def test_no_matching_paths(self):
@@ -332,7 +332,7 @@ class TestSaverCsvReadMethod(unittest.TestCase):
     def test_exists_one_file(self):
         # Arrange
         saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
-        params = ['dir2', 'subdir2', 'subdir3', 'file5.csv']
+        params = ['dir2', 'subdir2', 'subdir3']
 
         # Act
         result = saver.exists(params)
@@ -361,6 +361,26 @@ class TestSaverCsvReadMethod(unittest.TestCase):
 
         # Assert
         self.assertEqual(result, 0)
+
+    def test_read_multi_files_avg(self):
+        # Create another results file with different values
+        results = pd.DataFrame({'a': [7,8,9], 'd': [10,11,12]})
+        results.to_csv(os.path.join(self.test_dir, 'dir2/subdir2/subdir3/more_results.csv'), mode='w', index=False)
+        # Create some params to use for testing
+        params = ['dir2', 'subdir2', 'subdir3']
+        # Create an instance of SaverCsv
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+
+        # Call the read method to get max value and params
+        param, value = saver.read(params, 'a', avg=True)
+
+        # Check results are as expected
+        self.assertEqual(param, ['dir2','subdir2','subdir3'])
+        self.assertEqual(value, 8)
+
+        # Remove the results file
+        os.remove(os.path.join(self.test_dir, 'dir2/subdir2/subdir3/more_results.csv'))
+
 
 
 if __name__ == "__main__":
