@@ -7,7 +7,6 @@ So early I haven't even written the docs yet! Will be adding a quick example her
 ## Coming soon
 Currently very much in early stages, first things still to do, in order of priority:
 - Make package user friendly:
-    - Refine package structure (should be able to import without specifiying file).
     - Add github workflows to automate testing, check code coverage etc. 
     - Add integration testing.
     - Add documentation.

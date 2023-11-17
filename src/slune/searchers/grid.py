@@ -13,7 +13,7 @@ class SearcherGrid(BaseSearcher):
             runs = 0 -> run each hyperparameter config once even if it already exists
             this behaviour is modified if we want to (use) check_existing_runs, see methods description
     """
-    def __init__(self, hyperparameters: dict, runs: int = 1):
+    def __init__(self, hyperparameters: dict, runs: int = 0):
         super().__init__()
         self.runs = runs
         self.hyperparameters = hyperparameters

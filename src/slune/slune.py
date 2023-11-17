@@ -2,8 +2,8 @@ from argparse import ArgumentParser
 import subprocess
 import sys
 
-from slune.savers import SaverCsv
-from slune.loggers import LoggerDefault
+from slune.savers.csv import SaverCsv
+from slune.loggers.default import LoggerDefault
 
 def submit_job(sh_path, args):
     """

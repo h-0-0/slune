@@ -1,8 +1,8 @@
 import unittest
 import os
 import pandas as pd
-from slune.savers import SaverCsv
-from slune.loggers import LoggerDefault
+from slune.savers.csv import SaverCsv
+from slune.loggers.default import LoggerDefault
 
 class TestSaverCsv(unittest.TestCase):
     def setUp(self):

@@ -1,7 +1,7 @@
 import unittest
 
 # Import your SearcherGrid class here
-from slune.searchers import SearcherGrid
+from slune.searchers.grid import SearcherGrid
 from slune.base import BaseSaver, BaseLogger
 
 # Create a mock Logger object to use in the tests
@@ -94,7 +94,7 @@ class TestSearcherGrid(unittest.TestCase):
             "--param1": [1, 2],
             "--param2": ["a", "b"]
         }
-        searcher = SearcherGrid(hyperparameters)
+        searcher = SearcherGrid(hyperparameters, runs=1)
         
         # Check that the length is as expected
         self.assertEqual(len(searcher), 4)
@@ -142,7 +142,7 @@ class TestSearcherGrid(unittest.TestCase):
             "--param1": [1, 2],
             "--param2": ["a", "b"]
         }
-        searcher = SearcherGrid(hyperparameters)
+        searcher = SearcherGrid(hyperparameters, runs=1)
         
         # Check that slog_exists is None before calling check_existing_runs
         self.assertIsNone(searcher.slog_exists)
@@ -159,7 +159,7 @@ class TestSearcherGrid(unittest.TestCase):
             "--param1": [1, 2],
             "--param2": ["a", "b"]
         }
-        searcher = SearcherGrid(hyperparameters)
+        searcher = SearcherGrid(hyperparameters, runs=1)
         
         # Check that skip_existing_runs correctly skips existing runs
         searcher.check_existing_runs(MockSaver(MockLogger()))

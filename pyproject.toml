@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "slune-lib"
+authors = [
+    {name = "Henry Bourne", email = "hwbourne@gmail.com"},
+]
+description = "A package for performing hyperparameter tuning with the SLURM scheduling system."
+readme = "README.md"
+requires-python = ">=3.1"
+keywords = ["SLURM", "hyperparameter", "tuning", "machine", "learning", "optimisation"]
+license = {text = "MIT License"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dynamic = ["version"]
+dependencies = [
+    "pandas"
+]
+
+[tool.setuptools_scm]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+python_classes = ["Test", "Describe"]
+python_functions = ["test_", "it_", "and_", "but_", "they_"]
+python_files = ["test_*.py",]
+testpaths = ["tests", "integration"]

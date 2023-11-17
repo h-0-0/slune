@@ -1,9 +1,9 @@
 import unittest
 from unittest.mock import patch
-import pandas as pd
-from slune.loggers import LoggerDefault
+from slune.loggers.default import LoggerDefault
 from datetime import datetime
 import time
+import pandas as pd
 
 class TestLoggerDefaultWrite(unittest.TestCase):
     def setUp(self):
