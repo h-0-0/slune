@@ -1,4 +1,4 @@
-https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/h-0-0/4aa01e058fee448070c587f6967037e4/raw/covbadge.json
+![CodeCoverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/h-0-0/4aa01e058fee448070c587f6967037e4/raw/covbadge.json)
 
 # slune (= slurm + tune!)
 A super simplistic way to perform hyperparameter tuning (or more generally launch jobs and save results) on a cluster using SLURM. Takes advantage of the fact that lots of jobs (including hyperparameter tuning) are embarrassingly parallel! With slune you can divide your compute into lots of separately scheduled jobs meaning that each small job can get running on your cluster more quickly, speeding up your workflow! Often significantly! 

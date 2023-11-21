@@ -18,7 +18,8 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
-    "pandas"
+    'pandas',
+    'coverage'
 ]
 
 [tool.setuptools_scm]
