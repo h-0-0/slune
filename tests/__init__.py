@@ -1,1 +1,3 @@
-# Empty!
+# __init__.py
+
+print("Initializing slune")
