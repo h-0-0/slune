@@ -1,12 +1,13 @@
 import unittest
 from unittest.mock import patch, call, MagicMock
 from slune import garg, submit_job, sbatchit
+import os
 
 class TestSubmitJob(unittest.TestCase):
     @patch('subprocess.run')
     def test_regular(self, mock_run):
         # Arrange
-        sh_path = "/path/to/bash/script"
+        sh_path = os.path.join('path','to','bash','script')
         args = ["arg1", "arg2"]
 
         # Act
@@ -19,8 +20,8 @@ class TestSbatchit(unittest.TestCase):
     @patch('subprocess.run')
     def test_sbatchit(self, mock_run):
         # Arrange
-        script_path = "/path/to/script"
-        template_path = "/path/to/template"
+        script_path = os.path.join('path','to','script')
+        template_path = os.path.join('path','to','template')
         searcher = MagicMock()
         searcher.__iter__.return_value = [['arg1', 'arg2'], ['arg3', 'arg4']]
         cargs = ["carg1", "carg2"]

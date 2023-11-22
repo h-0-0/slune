@@ -45,7 +45,7 @@ class TestSaverCsv(unittest.TestCase):
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder3=0.3", "--folder2=0.2", "--folder1=0.1"])
-        self.assertEqual(matching_dir, os.path.join(self.test_dir, "--folder1=0.1/--folder2=0.2/--folder3=0.3"))
+        self.assertEqual(matching_dir, os.path.join(*[self.test_dir, '--folder1=0.1','--folder2=0.2','--folder3=0.3']))
 
     def test_get_match_partial_match(self):
         # Create a SaverCsv instance
@@ -53,7 +53,7 @@ class TestSaverCsv(unittest.TestCase):
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder2=0.2", "--folder1=0.1"])
-        self.assertEqual(matching_dir, os.path.join(self.test_dir, "--folder1=0.1/--folder2=0.2"))
+        self.assertEqual(matching_dir, os.path.join(*[self.test_dir, '--folder1=0.1','--folder2=0.2']))
 
     def test_get_match_partial_match_more_params(self):
         # Create a SaverCsv instance
@@ -61,7 +61,7 @@ class TestSaverCsv(unittest.TestCase):
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder1=0.1", "--folder6=0.6", "--folder5=0.5", "--folder7=0.7"])
-        self.assertEqual(matching_dir, os.path.join(self.test_dir, "--folder1=0.1/--folder5=0.5/--folder6=0.6/--folder7=0.7"))
+        self.assertEqual(matching_dir, os.path.join(*[self.test_dir, '--folder1=0.1','--folder5=0.5','--folder6=0.6','--folder7=0.7']))
 
     def test_get_match_different_values(self):
         # Create a SaverCsv instance
@@ -69,7 +69,7 @@ class TestSaverCsv(unittest.TestCase):
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder2=2.2", "--folder1=1.1"])
-        self.assertEqual(matching_dir, os.path.join(self.test_dir, "--folder1=1.1/--folder2=2.2"))
+        self.assertEqual(matching_dir, os.path.join(*[self.test_dir, '--folder1=1.1','--folder2=2.2']))
 
     def test_get_match_too_deep(self):
         # Create a SaverCsv instance
@@ -77,7 +77,7 @@ class TestSaverCsv(unittest.TestCase):
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder2=0.2", "--folder3=0.3"])
-        self.assertEqual(matching_dir, os.path.join(self.test_dir, '--folder2=0.2', '--folder3=0.3'))
+        self.assertEqual(matching_dir, os.path.join(*[self.test_dir, '--folder2=0.2', '--folder3=0.3']))
 
     def test_get_match_no_match(self):
         # Create a SaverCsv instance
@@ -85,7 +85,7 @@ class TestSaverCsv(unittest.TestCase):
 
         # Test if get_match finds correct match and builds correct directory path using the parameters
         matching_dir = saver.get_match(["--folder_not_there=0", "--folder_also_not_there=0.1"])
-        self.assertEqual(matching_dir, os.path.join(self.test_dir, "--folder_not_there=0/--folder_also_not_there=0.1"))
+        self.assertEqual(matching_dir, os.path.join(*[self.test_dir, '--folder_not_there=0','--folder_also_not_there=0.1']))
 
     def test_get_match_duplicate_params(self):
         # Create a SaverCsv instance
@@ -121,7 +121,7 @@ class TestSaverCsv(unittest.TestCase):
 
         # Test if get_path gets the correct path
         path = saver.get_path(["--folder5=0.5","--folder1=0.1", "--folder6=0.6"])
-        self.assertEqual(path, os.path.join(self.test_dir, "--folder1=0.1/--folder5=0.5/--folder6=0.6/results_0.csv"))
+        self.assertEqual(path, os.path.join(*[self.test_dir, '--folder1=0.1','--folder5=0.5','--folder6=0.6','results_0.csv']))
 
     def test_get_path_already_results(self):
         # Create a SaverCsv instance
@@ -129,7 +129,7 @@ class TestSaverCsv(unittest.TestCase):
 
         # Test if get_path gets the correct path
         path = saver.get_path(["--folder3=0.3", "--folder2=0.2", "--folder1=0.1"]) 
-        self.assertEqual(path, os.path.join(self.test_dir, "--folder1=0.1/--folder2=0.2/--folder3=0.3/results_1.csv"))
+        self.assertEqual(path, os.path.join(*[self.test_dir, '--folder1=0.1','--folder2=0.2','--folder3=0.3','results_1.csv']))
 
     def test_save_collated(self):
         # Create a SaverCsv instance
@@ -139,7 +139,7 @@ class TestSaverCsv(unittest.TestCase):
         # Save the results
         saver.save_collated_from_results(results)
         # Check if the results were saved correctly
-        read_results = pd.read_csv(os.path.join(self.test_dir, "--folder1=0.1/--folder2=0.2/--folder3=0.3/results_1.csv"))
+        read_results = pd.read_csv(os.path.join(*[self.test_dir, '--folder1=0.1','--folder2=0.2','--folder3=0.3','results_1.csv']))
         self.assertEqual(read_results.shape, (3,2))
         self.assertEqual(results.columns.tolist(), read_results.columns.tolist())
         read_values = [x for x in read_results.values.tolist() if str(x) != 'nan']
@@ -150,7 +150,7 @@ class TestSaverCsv(unittest.TestCase):
         # Save the results
         saver.save_collated_from_results(results)
         # Check if the results were saved correctly
-        read_results = pd.read_csv(os.path.join(self.test_dir, "--folder1=0.1/--folder2=0.2/--folder3=0.3/results_1.csv"))
+        read_results = pd.read_csv(os.path.join(*[self.test_dir, '--folder1=0.1','--folder2=0.2','--folder3=0.3','results_1.csv']))
         results = pd.concat([pd.DataFrame({'a': [1,2,3], 'b': [4,5,6]}), results], ignore_index=True)
         self.assertEqual(read_results.shape, (6,3))
         self.assertEqual(results.columns.tolist(), read_results.columns.tolist())
@@ -168,7 +168,7 @@ class TestSaverCsv(unittest.TestCase):
         # Save the results
         saver.save_collated_from_results(results)
         # Check if the results were saved correctly
-        read_results = pd.read_csv(os.path.join(self.test_dir, "--folder1=0.01/--folder2=0.02/--folder3=0.03/results_0.csv"))
+        read_results = pd.read_csv(os.path.join(*[self.test_dir, '--folder1=0.01','--folder2=0.02','--folder3=0.03','results_0.csv']))
         self.assertEqual(read_results.shape, (3,2))
         self.assertEqual(results.columns.tolist(), read_results.columns.tolist())
         read_values = [x for x in read_results.values.tolist() if str(x) != 'nan']
@@ -182,13 +182,13 @@ class TestSaverCsv(unittest.TestCase):
         
     def test_root_dir_forwardslash(self):
         # Create a SaverCsv instance
-        saver = SaverCsv(LoggerDefault(), ["--folder3=0.3", "--folder2=0.2"], root_dir=self.test_dir+'/--folder1=0.1')
+        saver = SaverCsv(LoggerDefault(), ["--folder3=0.3", "--folder2=0.2"], root_dir=os.path.join(self.test_dir,'--folder1=0.1'))
         # Create a data frame with some results
         results = pd.DataFrame({'a': [1,2,3], 'b': [4,5,6]})
         # Save the results
         saver.save_collated_from_results(results)
         # Check if the results were saved correctly
-        read_results = pd.read_csv(os.path.join(self.test_dir, "--folder1=0.1/--folder2=0.2/--folder3=0.3/results_1.csv"))
+        read_results = pd.read_csv(os.path.join(*[self.test_dir, '--folder1=0.1','--folder2=0.2','--folder3=0.3','results_1.csv']))
         self.assertEqual(read_results.shape, (3,2))
         self.assertEqual(results.columns.tolist(), read_results.columns.tolist())
         read_values = [x for x in read_results.values.tolist() if str(x) != 'nan']
@@ -206,18 +206,18 @@ class TestSaverCsvReadMethod(unittest.TestCase):
 
         # Creating some CSV files with specific subdirectory paths
         self.csv_files = [
-            'dir1/file1.csv',
-            'dir2/file2.csv',
-            'dir1/subdir1/file3.csv',
-            'dir2/subdir2/file4.csv',
-            'dir2/subdir2/subdir3/file5.csv'
+            os.path.join('dir1','file1.csv'),
+            os.path.join('dir2','file2.csv'),
+            os.path.join('dir1','subdir1','file3.csv'),
+            os.path.join('dir2','subdir2','file4.csv'),
+            os.path.join('dir2','subdir2','subdir3','file5.csv')
         ]
 
         for i, file in enumerate(self.csv_files):
             file_path = os.path.join(self.test_dir, file)
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
             # Create a data frame with different values for each CSV file
-            if file_path == 'dir2/subdir2/subdir3/file5.csv':
+            if file_path == os.path.join('dir2','subdir2','subdir3','file5.csv'):
                 results = pd.DataFrame({'a': [i+1,i+2,i+3], 'b': [i+4,i+5,i+6], 'c': [i+7,i+8,i+9]})
             else:
                 results = pd.DataFrame({'a': [i+1,i+2,i+3], 'b': [i+4,i+5,i+6]})
@@ -365,7 +365,7 @@ class TestSaverCsvReadMethod(unittest.TestCase):
     def test_read_multi_files_avg(self):
         # Create another results file with different values
         results = pd.DataFrame({'a': [7,8,9], 'd': [10,11,12]})
-        results.to_csv(os.path.join(self.test_dir, 'dir2/subdir2/subdir3/more_results.csv'), mode='w', index=False)
+        results.to_csv(os.path.join(self.test_dir, 'dir2','subdir2','subdir3','more_results.csv'), mode='w', index=False)
         # Create some params to use for testing
         params = ['dir2', 'subdir2', 'subdir3']
         # Create an instance of SaverCsv
@@ -379,7 +379,7 @@ class TestSaverCsvReadMethod(unittest.TestCase):
         self.assertEqual(value, 8)
 
         # Remove the results file
-        os.remove(os.path.join(self.test_dir, 'dir2/subdir2/subdir3/more_results.csv'))
+        os.remove(os.path.join(self.test_dir, 'dir2','subdir2','subdir3','more_results.csv'))
 
 
 

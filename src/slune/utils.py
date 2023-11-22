@@ -18,7 +18,7 @@ def find_directory_path(strings, root_directory='.'):
             if string in stripped_dir_list:
                 dir_list = [d for d in dir_list if d.startswith(string)]
                 for d in dir_list:
-                    new_depth, new_path = _find_directory_path([s for s in curr_strings if s != string], curr_root + '/' + d, depth + 1, max_depth, max_path)
+                    new_depth, new_path = _find_directory_path([s for s in curr_strings if s != string], os.path.join(curr_root, d), depth + 1, max_depth, max_path)
                     if new_depth > max_depth:
                         max_depth, max_path = new_depth, new_path
         if depth > max_depth:
@@ -28,9 +28,9 @@ def find_directory_path(strings, root_directory='.'):
     max_depth, max_path = _find_directory_path(strings, root_directory, 0, -1, '')
     if max_depth > 0:
         max_path = max_path[len(root_directory):]
-        dirs = max_path[1:].split('/')
+        dirs = max_path[1:].split(os.path.sep)
         dirs = [d.split('=')[0].strip() +"=" for d in dirs]
-        max_path = '/'.join(dirs)
+        max_path = os.path.join(*dirs)
         max_path = os.path.join(root_directory, max_path)
     return max_path
 
@@ -50,7 +50,7 @@ def get_numeric_equiv(path, root_directory='.'):
         except ValueError:
             return False
 
-    dirs = path.split('/')
+    dirs = path.split(os.path.sep)
     equiv = root_directory
     for d in dirs:
         next_dir = os.path.join(equiv, d)
@@ -116,7 +116,7 @@ def get_all_paths(params, root_directory='.'):
     all_csv = find_csv_files(root_directory)
     matches = []
     for csv in all_csv:
-        path = csv.split('/')
+        path = csv.split(os.path.sep)
         if all([p in path for p in params]):
             matches.append(csv)
     return matches

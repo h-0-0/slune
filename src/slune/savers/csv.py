@@ -11,7 +11,7 @@ class SaverCsv(BaseSaver):
     Saves the results of each run in a CSV file in a hierarchical directory structure based on argument names.
     Handles parallel runs by waiting a random time
     """
-    def __init__(self, logger_instance: BaseLogger, params: List[str] = None, root_dir: Optional[str] ='./tuning_results'):
+    def __init__(self, logger_instance: BaseLogger, params: List[str] = None, root_dir: Optional[str] = os.path.join('.', 'tuning_results')):
         super(SaverCsv, self).__init__(logger_instance)
         self.root_dir = root_dir
         if params != None:
@@ -38,20 +38,21 @@ class SaverCsv(BaseSaver):
         match = find_directory_path(stripped_params, root_directory=self.root_dir)
         # Add on missing parameters
         if match == self.root_dir:
-            match = "/".join(stripped_params)
+            match = os.path.join(*stripped_params)
         else:
             missing_params = [p for p in stripped_params if p not in match]
             if missing_params != []:
-                match = match + '/' + '/'.join(missing_params)
+                match = [match] + missing_params
+                match = os.path.join(*match)
         # Take the root directory out of the match
         match = match.replace(self.root_dir, '')
-        if match.startswith('/'):
+        if match.startswith(os.path.sep):
             match = match[1:]
         # Now we add back in the values we stripped out
-        match = match.split('/')
+        match = match.split(os.path.sep)
         match = [[p for p in params if m in p][0] for m in match]
         # Check if there is an existing path with the same numerical values, if so use that instead
-        match = get_numeric_equiv("/".join(match), root_directory=self.root_dir)
+        match = get_numeric_equiv(os.path.join(*match), root_directory=self.root_dir)
         return match
 
     def get_path(self, params: List[str]):
@@ -94,8 +95,8 @@ class SaverCsv(BaseSaver):
         """
         # If path does not exist, create it
         # Remove the csv file name from the path
-        dir_path = self.current_path.split('/')[:-1]
-        dir_path = '/'.join(dir_path)
+        dir_path = self.current_path.split(os.path.sep)[:-1]
+        dir_path = os.path.join(*dir_path)
         if not os.path.exists(dir_path):
             time.sleep(random.random()) # Wait a random amount of time under 1 second to avoid multiple processes creating the same directory
             os.makedirs(dir_path)
@@ -130,9 +131,9 @@ class SaverCsv(BaseSaver):
         values = {}
         # Do averaging for different runs of same params if avg is True, otherwise just read the metric from each path
         if avg:
-            paths_same_params = set(['/'.join(p.split('/')[:-1]) for p in paths])
+            paths_same_params = set([os.path.join(*p.split(os.path.sep)[:-1]) for p in paths])
             for path in paths_same_params:
-                runs = get_all_paths(path.split('/'), root_directory=self.root_dir)
+                runs = get_all_paths(path.split(os.path.sep), root_directory=self.root_dir)
                 cumsum = 0
                 for r in runs:
                     df = pd.read_csv(r)
@@ -142,7 +143,7 @@ class SaverCsv(BaseSaver):
         else:
             for path in paths:
                 df = pd.read_csv(path)
-                values['/'.join(path.split('/')[:-1])] = self.read_log(df, metric_name, select_by)
+                values[os.path.join(*path.split(os.path.sep)[:-1])] = self.read_log(df, metric_name, select_by)
         # Get the key of the min/max value
         if select_by == 'min':
             best_params = min(values, key=values.get)
@@ -154,9 +155,9 @@ class SaverCsv(BaseSaver):
         best_value = values[best_params]
         # Format the path into a list of arguments
         best_params = best_params.replace(self.root_dir, '')
-        if best_params.startswith('/'):
+        if best_params.startswith(os.path.sep):
             best_params = best_params[1:]
-        best_params = best_params.split('/')
+        best_params = best_params.split(os.path.sep)
         return best_params, best_value       
 
     def exists(self, params: List[str]):
