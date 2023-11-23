@@ -1,4 +1,11 @@
-![CodeCoverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/h-0-0/4aa01e058fee448070c587f6967037e4/raw/covbadge.json)
+![version](https://img.shields.io/github/package-json/v/h-0-0/ci-badges-action?style=flat-square)
+![license](https://img.shields.io/github/license/h-0-0/ci-badges-action?style=flat-square)
+![build](https://img.shields.io/github/actions/workflow/status/h-0-0/ci-badges-action/main.yml?branch=main&style=flat-square)
+![tests](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fh-0-0%2F4aa01e058fee448070c587f6967037e4%2Fraw%2Fslune-python-tests.json
+)
+![coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fh-0-0%2F4aa01e058fee448070c587f6967037e4%2Fraw%2Fslune-python-coverage.json
+)
+
 
 # slune (= slurm + tune!)
 A super simplistic way to perform hyperparameter tuning (or more generally launch jobs and save results) on a cluster using SLURM. Takes advantage of the fact that lots of jobs (including hyperparameter tuning) are embarrassingly parallel! With slune you can divide your compute into lots of separately scheduled jobs meaning that each small job can get running on your cluster more quickly, speeding up your workflow! Often significantly! 

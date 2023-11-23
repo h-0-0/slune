@@ -44,3 +44,8 @@ jobs:
         path: coverage/lcov.info
         title: "Test Coverage"
         threshold: 80
+    - name: Create coverage and test badge 
+      uses: gaelgirodon/ci-badges-action@v1
+      with:
+        gist-id: 4aa01e058fee448070c587f6967037e4
+        token: ${{ secrets.GIST_TOKEN }}
