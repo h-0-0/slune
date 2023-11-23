@@ -105,7 +105,9 @@ Please check out the examples folder for notebooks detailing in more depth some 
 ## Roadmap
 - Make package user friendly:
     - Add github workflows to automate testing, check code coverage etc. 
+    - Go through automation settings.
     - Add documentation.
+    - Add to pypi.
 Still in early stages! First thing on the horizon is better integration with SLURM:
 - Set-up notifications for job completion, failure, etc.
 - Auto job naming, job output naming and job output location saving.

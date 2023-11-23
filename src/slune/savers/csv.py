@@ -168,3 +168,9 @@ class SaverCsv(BaseSaver):
         #  Get all paths that match the parameters given
         paths = get_all_paths(params, root_directory=self.root_dir)
         return len(paths)
+
+    def get_current_path(self):
+        """
+        Getter function for the current_path attribute 
+        """
+        return self.current_path
