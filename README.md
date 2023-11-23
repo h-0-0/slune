@@ -1,10 +1,5 @@
-![version](https://img.shields.io/github/package-json/v/h-0-0/ci-badges-action?style=flat-square)
-![license](https://img.shields.io/github/license/h-0-0/ci-badges-action?style=flat-square)
-![build](https://img.shields.io/github/actions/workflow/status/h-0-0/ci-badges-action/main.yml?branch=main&style=flat-square)
-![tests](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fh-0-0%2F4aa01e058fee448070c587f6967037e4%2Fraw%2Fslune-python-tests.json
-)
-![coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fh-0-0%2F4aa01e058fee448070c587f6967037e4%2Fraw%2Fslune-python-coverage.json
-)
+<!-- Pytest Coverage Comment:Begin -->
+<!-- Pytest Coverage Comment:End -->
 
 
 # slune (= slurm + tune!)
