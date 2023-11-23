@@ -39,7 +39,7 @@ jobs:
       run: |
         pytest --cov-report term-missing --cov=src tests/
     - name: Comment test coverage
-      uses: itsparser/covreport@v1
+      uses: itsparser/covreport@v1.0.0
       env:
         path: coverage/lcov.info
         title: "Test Coverage"
