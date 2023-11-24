@@ -1,3 +1,3 @@
-from .default import DefaultLogger
+from .default import LoggerDefault
 
-__all__ = ['DefaultLogger']
+__all__ = ['LoggerDefault']
