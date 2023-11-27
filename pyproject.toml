@@ -34,4 +34,6 @@ python_files = ["test_*.py",]
 testpaths = ["tests", "integration"]
 
 [tool.coverage.run]
-source = ["src/slune"]
+source = ["src/slune"]  # Adjust this to match your package source path
+branch = true
+omit = ["tests/*", "integration/*"]  # Adjust as needed
