@@ -1,4 +1,4 @@
-name: Python package
+name: Tests (on multiple OS)
 
 on:
   push:
@@ -47,12 +47,22 @@ jobs:
           echo "TESTS_PASSED=false" >> $GITHUB_ENV
         fi
 
+    - name: Determine badge color
+      id: determine-color
+      run: |
+        echo "COVERAGE=${{ env.TESTS_PASSED }}"
+        if [ "${{ env.TESTS_PASSED }}" == "true" ]; then
+          echo "::set-output name=color::green"
+        else
+          echo "::set-output name=color::red"
+        fi
+      
     - name: Create Coverage Badge
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
         auth: ${{ secrets.GIST_TOKEN }}
         gistID: 4aa01e058fee448070c587f6967037e4
-        filename: CodeCovSlune.json # Use test.svg if you want to use the SVG mode.
+        filename: Tests-${{ matrix.os }}-python${{ matrix.python-version }}.json # Use test.svg if you want to use the SVG mode.
         label: Tests-${{ matrix.os }}-python${{ matrix.python-version }}
-        message: "${{ steps.extract-coverage.outputs.coverage }}%"
+        message: ${{ env.TESTS_PASSED }}
         color: ${{ steps.determine-color.outputs.color }}
