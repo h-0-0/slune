@@ -48,7 +48,7 @@ jobs:
           echo "TESTS_PASSED_${{ matrix.python-version }}=true" >> $GITHUB_ENV
         fi
 
-  create-badge:
+  build:
     needs: build
     runs-on: macos-latest
     - name: Determine badge color
