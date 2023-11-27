@@ -1,0 +1,82 @@
+name: Tests 
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install flake8 pytest coverage pytest-cov
+        python -m pip install -e .
+
+    - name: Lint with flake8
+      run: |
+        # stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+    - name: Set TESTS_PASSED env variable to true
+      run: |
+        echo "TESTS_PASSED=false" >> $GITHUB_ENV
+
+    - name: Test with pytest and create coverage report
+      run: |
+        cd $GITHUB_WORKSPACE
+        python -m pytest
+        if [ $? -eq 0 ]; then
+          echo "TESTS_PASSED_${{ matrix.python-version }}=true" >> $GITHUB_ENV
+        fi
+
+  create-badge:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine overall badge color
+        id: determine-color
+        run: |
+          overall_status="true"
+          for python_version in "3.9" "3.10" "3.11"; do
+            env_var="TESTS_PASSED_${python_version}"
+            if [ "${env_var}" != "true" ]; then
+              overall_status="false"
+              break
+            fi
+          done
+
+          echo "COVERAGE=${overall_status}"
+          if [ "${overall_status}" == "true" ]; then
+            echo "::set-output name=color::green"
+          else
+            echo "::set-output name=color::red"
+          fi
+
+      - name: Create Coverage Badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_TOKEN }}
+          gistID: 4aa01e058fee448070c587f6967037e4
+          filename: Tests-windows.json # Use test.svg if you want to use the SVG mode.
+          label: Tests-windows
+          message: ${overall_status}
+          color: ${{ steps.determine-color.outputs.color }}
