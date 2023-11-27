@@ -43,7 +43,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         pwd
-        python -m pytest --cov=src/slune tests/ > coverage_report.txt
+        python -m pytest > coverage_report.txt
 
     - name: Extract coverage percentage
       id: extract-coverage

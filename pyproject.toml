@@ -32,3 +32,6 @@ python_classes = ["Test", "Describe"]
 python_functions = ["test_", "it_", "and_", "but_", "they_"]
 python_files = ["test_*.py",]
 testpaths = ["tests", "integration"]
+
+[tool.coverage.run]
+source = ["src/slune"]
