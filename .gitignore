@@ -161,3 +161,7 @@ cython_debug/
 
 # Don't include vs code settings
 .vscode
+
+# Don't include coverage reports
+.coverage
+coverage_report*
