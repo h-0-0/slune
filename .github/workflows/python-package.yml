@@ -54,7 +54,7 @@ jobs:
       with:
         auth: ${{ secrets.CodeCov }}
         gistID: 4aa01e058fee448070c587f6967037e4
-        filename: CodeCov.json # Use test.svg if you want to use the SVG mode.
+        filename: CodeCovSlune.json # Use test.svg if you want to use the SVG mode.
         label: CodeCov
         message: "Coverage: ${{ steps.extract-coverage.outputs.coverage }}%"
         color: orange
