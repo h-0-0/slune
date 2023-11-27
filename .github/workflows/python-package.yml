@@ -41,6 +41,7 @@ jobs:
 
     - name: Test with pytest and create coverage report
       run: |
+        pwd
         pytest --cov=src/slune /tests > coverage_report.txt
 
     - name: Extract coverage percentage
