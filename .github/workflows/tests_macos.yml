@@ -52,16 +52,6 @@ jobs:
     needs: build
     runs-on: macos-latest
     steps:
-      - name: Determine badge color
-        id: determine-color
-        run: |
-          echo "COVERAGE=${{ env.TESTS_PASSED }}"
-          if [ "${{ env.TESTS_PASSED }}" == "true" ]; then
-            echo "::set-output name=color::green"
-          else
-            echo "::set-output name=color::red"
-          fi
-
       - name: Determine overall badge color
         id: determine-color
         run: |
