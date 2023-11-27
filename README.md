@@ -3,7 +3,7 @@
 
 
 # slune (= slurm + tune!)
-A super simplistic way to perform hyperparameter tuning (or more generally launch jobs and save results) on a cluster using SLURM. Takes advantage of the fact that lots of jobs (including hyperparameter tuning) are embarrassingly parallel! With slune you can divide your compute into lots of separately scheduled jobs meaning that each small job can get running on your cluster more quickly, speeding up your workflow! Often significantly! 
+A super simplistic python package for performing hyperparameter tuning (or more generally launching jobs and saving results) on a cluster using SLURM. Takes advantage of the fact that lots of jobs (including hyperparameter tuning) are embarrassingly parallel! With slune you can divide your compute into lots of separately scheduled jobs meaning that each small job can get running on your cluster more quickly, speeding up your workflow! Often significantly! 
 
 Slune is super-easy to use! We have helper functions which can execute everything you need done for you. Letting you speed up your work without wasting time. 
 
