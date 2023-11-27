@@ -50,6 +50,18 @@ jobs:
         COVERAGE_PERCENTAGE=$(grep -oP 'TOTAL.*?\K\d+(?=%)' coverage_report.txt)
         echo "::set-output name=coverage::$COVERAGE_PERCENTAGE"
 
+    - name: Determine badge color
+      id: determine-color
+      run: |
+        echo "COVERAGE=${{ steps.extract-coverage.outputs.coverage }}"
+        if [ $(echo "${{ steps.extract-coverage.outputs.coverage }} < 70" | bc -l) -eq 1 ]; then
+          echo "::set-output name=color::red"
+        elif [ $(echo "${{ steps.extract-coverage.outputs.coverage }} < 90" | bc -l) -eq 1 ]; then
+          echo "::set-output name=color::yellow"
+        else
+          echo "::set-output name=color::green"
+        fi
+
     - name: Create Coverage Badge
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
@@ -58,4 +70,4 @@ jobs:
         filename: CodeCovSlune.json # Use test.svg if you want to use the SVG mode.
         label: Coverage
         message: "${{ steps.extract-coverage.outputs.coverage }}%"
-        color: ${{ if le(steps.extract-coverage.outputs.coverage, 70) }}red{{ elif le(steps.extract-coverage.outputs.coverage, 90) }}yellow{{ else }}green{{ endif }}
+        color: ${{ steps.determine-color.outputs.color }}
