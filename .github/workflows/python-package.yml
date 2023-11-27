@@ -52,7 +52,7 @@ jobs:
     - name: Create Coverage Badge
       uses: schneegans/dynamic-badges-action@v1.7.0
       with:
-        auth: ${{ secrets.CodeCov }}
+        auth: ${{ secrets.GIST_TOKEN }}
         gistID: 4aa01e058fee448070c587f6967037e4
         filename: CodeCovSlune.json # Use test.svg if you want to use the SVG mode.
         label: CodeCov
