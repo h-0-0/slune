@@ -43,7 +43,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         pwd
-        coverage run --module pytest --verbose && coverage report --show-missing > coverage_report.txt
+        coverage run --source=src --module pytest --verbose tests && coverage report --show-missing > coverage_report.txt
 
     - name: Extract coverage percentage
       id: extract-coverage
