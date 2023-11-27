@@ -41,7 +41,7 @@ jobs:
 
     - name: Test with pytest and create coverage report
       run: |
-        pytest --cov-report term-missing --cov=src tests/ > coverage_report.txt
+        pytest --cov=src/slune /tests > coverage_report.txt
 
     - name: Extract coverage percentage
       id: extract-coverage
