@@ -48,6 +48,8 @@ jobs:
     - name: Extract coverage percentage
       id: extract-coverage
       run: |
+        pwd
+        ls
         less coverage_report.txt
         COVERAGE_PERCENTAGE=$(grep -oP 'TOTAL.*?\K\d+(?=%)' coverage_report.txt)
         echo "::set-output name=coverage::$COVERAGE_PERCENTAGE"
