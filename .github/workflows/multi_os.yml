@@ -1,6 +1,3 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
 name: Python package
 
 on:
@@ -12,11 +9,12 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.9", "3.10", "3.11"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v3
@@ -42,24 +40,11 @@ jobs:
     - name: Test with pytest and create coverage report
       run: |
         cd $GITHUB_WORKSPACE
-        python -m coverage run --module pytest --verbose && coverage report --show-missing > coverage_report.txt
-
-    - name: Extract coverage percentage
-      id: extract-coverage
-      run: |
-        COVERAGE_PERCENTAGE=$(grep -oP 'TOTAL.*?\K\d+(?=%)' coverage_report.txt)
-        echo "::set-output name=coverage::$COVERAGE_PERCENTAGE"
-
-    - name: Determine badge color
-      id: determine-color
-      run: |
-        echo "COVERAGE=${{ steps.extract-coverage.outputs.coverage }}"
-        if [ $(echo "${{ steps.extract-coverage.outputs.coverage }} < 70" | bc -l) -eq 1 ]; then
-          echo "::set-output name=color::red"
-        elif [ $(echo "${{ steps.extract-coverage.outputs.coverage }} < 90" | bc -l) -eq 1 ]; then
-          echo "::set-output name=color::yellow"
+        python -m pytest
+        if [ $? -eq 0 ]; then
+          echo "TESTS_PASSED=true" >> $GITHUB_ENV
         else
-          echo "::set-output name=color::green"
+          echo "TESTS_PASSED=false" >> $GITHUB_ENV
         fi
 
     - name: Create Coverage Badge
@@ -68,6 +53,6 @@ jobs:
         auth: ${{ secrets.GIST_TOKEN }}
         gistID: 4aa01e058fee448070c587f6967037e4
         filename: CodeCovSlune.json # Use test.svg if you want to use the SVG mode.
-        label: Coverage
+        label: Tests-${{ matrix.os }}-python${{ matrix.python-version }}
         message: "${{ steps.extract-coverage.outputs.coverage }}%"
         color: ${{ steps.determine-color.outputs.color }}
