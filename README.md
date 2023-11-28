@@ -1,3 +1,4 @@
+[![license](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/h-0-0/4aa01e058fee448070c587f6967037e4/raw/CodeCovSlune.json)
 
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/h-0-0/4aa01e058fee448070c587f6967037e4/raw/Tests-macos.json)
