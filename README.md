@@ -111,9 +111,10 @@ Please check out the examples folder for notebooks detailing in more depth some 
 
 ## Roadmap
 - Make package user friendly:
-    - Add github workflows to automate testing, check code coverage etc. 
-    - Go through automation settings.
     - Add documentation.
+    - Go through automation settings.
+    - Code of conduct.
+    - Contributing guidelines.
     - Add to pypi.
 Still in early stages! First thing on the horizon is better integration with SLURM:
 - Set-up notifications for job completion, failure, etc.
@@ -121,7 +122,7 @@ Still in early stages! First thing on the horizon is better integration with SLU
 - Auto save logged results when finishing a job.
 - Automatically re-submit failed jobs.
 - Tools for monitoring and cancelling jobs. 
-Then it will be looking at adding more savers, loggers and searchers! For example integration with tensorboard, saving to one csv file (as opposed to a hierarchy of csv files in different directories) and different search methods like random search and cross validation. Finally, more helper functions!
+Then it will be looking at adding more savers, loggers and searchers! For example integration with tensorboard, saving to one csv file (as opposed to a hierarchy of csv files in different directories) and different search methods like random search and cross validation. It would perhaps also be beneficial to be able to interface with other languages like R and Julia. Finally, more helper functions!
 
 However, I am trying to keep this package as bloatless as possible to make it easy for you to tweak and configure to your individual needs. It's written in a simple and compartmentalized manner for this reason. You can of course use the helper functions and let slune handle everything under the hood, but, you can also very quickly and easily write your own classes to work with other savers, loggers and searchers to do as you please.
 
