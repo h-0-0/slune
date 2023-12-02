@@ -135,7 +135,7 @@ class TestSearcherGrid(unittest.TestCase):
             searcher.next_tune()
     
     def test_check_existing_runs(self):
-        # Test that check_existing_runs correctly sets the slog_exists attribute
+        # Test that check_existing_runs correctly sets the saver_exists attribute
         
         # Create an instance of SearcherGrid with sample hyperparameters
         hyperparameters = {
@@ -144,12 +144,12 @@ class TestSearcherGrid(unittest.TestCase):
         }
         searcher = SearcherGrid(hyperparameters, runs=1)
         
-        # Check that slog_exists is None before calling check_existing_runs
-        self.assertIsNone(searcher.slog_exists)
+        # Check that saver_exists is None before calling check_existing_runs
+        self.assertIsNone(searcher.saver_exists)
         
-        # Check that slog_exists is set to a function after calling check_existing_runs
+        # Check that saver_exists is set to a function after calling check_existing_runs
         searcher.check_existing_runs(MockSaver(MockLogger()))
-        self.assertTrue(callable(searcher.slog_exists))
+        self.assertTrue(callable(searcher.saver_exists))
     
     def test_skip_existing_runs_positive(self):
         # Test that skip_existing_runs correctly skips existing runs

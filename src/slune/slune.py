@@ -1,15 +1,20 @@
-from argparse import ArgumentParser
+from typing import List, Optional, Union
+from slune.base import BaseSearcher, BaseSaver
 import subprocess
 import sys
-
 from slune.savers.csv import SaverCsv
 from slune.loggers.default import LoggerDefault
 
-def submit_job(sh_path, args):
+def submit_job(sh_path: str, args: List[str]):
+    """ Submits a job using specified Bash script
+
+    Args:
+        - sh_path (string): Path to the Bash script to be run.
+
+        - args (list of str): List of strings containing the arguments to be passed to the Bash script.
+    
     """
-    Submits a job using the Bash script at sh_path,
-    args is a list of strings containing the arguments to be passed to the Bash script.
-    """
+
     try:
         # Run the Bash script using subprocess
         command = [sh_path] + args
@@ -17,44 +22,57 @@ def submit_job(sh_path, args):
     except subprocess.CalledProcessError as e:
         print(f"Error running sbatch: {e}")
 
-def sbatchit(script_path, template_path, searcher, cargs=[], slog=None):
-    """
-    Carries out hyper-parameter tuning by submitting a job for each set of hyper-parameters given by tune_control, 
-    for each job runs the script stored at script_path with selected hyper-parameter values and the arguments given by cargs.
-    Uses the template file with path template_path to guide the creation of the sbatch script for each job. 
+def sbatchit(script_path: str, sbatch_path: str, searcher: BaseSearcher, cargs: Optional[List]=[], saver: Optional[BaseSaver]=None):
+    """ Submits jobs based on arguments given by searcher.
+
+    For each job runs the script stored at script_path with selected parameter values given by searcher
+    and the arguments given by cargs.
+
+    Uses the sbatch script with path sbatch_path to submit each job to the cluster. 
+
+    If given a Saver object, uses it to check if there are existing runs for each job and skips them,
+    based on the number of runs we would like for each job (which is stored in the saver).
+
     Args:
-        - script_path (string): Path to the script (of the model) to be run for each job.
+        - script_path (str): Path to the script (of the model) to be run for each job.
 
-        - template_path (string): Path to the template file used to create the sbatch script for each job.
+        - sbatch_path (str): Path to the sbatch script that will be used to submit each job.
+            Examples of sbatch scripts can be found in the templates folder.
 
-        - searcher (Searcher): Searcher object used to select hyper-parameter values for each job.
+        - searcher (Searcher): Searcher object used to retrieve changing arguments for each job.
 
-        - cargs (list): List of strings containing the arguments to be passed to the script for each job. 
-                        Must be a list even if there is just one argument, default is empty list.
+        - cargs (list, optional): Contains arguments to be passed to the script for every job.
 
-        - slog (Saver): Saver object (instantiated with a Logger object) used if we want to check if there are existing runs so we don't rerun.
-                        Don't give a Saver object if you want to rerun all jobs!
+        - saver (Saver, optional): Saver object used if we want to check if there are existing runs so we don't rerun.
+            Can simply not give a Saver object if you want to rerun all jobs.
+
     """
-    if slog != None:
-        searcher.check_existing_runs(slog)
+
+    if saver != None:
+        searcher.check_existing_runs(saver)
     # Create sbatch script for each job
     for args in searcher:
         # Submit job
-        submit_job(template_path, [script_path] + cargs + args)
-    print("Submitted all jobs!")
+        submit_job(sbatch_path, [script_path] + cargs + args)
 
-def lsargs():
-    """
-    Returns the script name and a list of the arguments passed to the script.
-    """
+def lsargs() -> (str, List[str]):
+    """ Returns the script name and a list of the arguments passed to the script."""
     args = sys.argv
     return args[0], args[1:]
 
-def garg(args, arg_names):
+def garg(args: List[str], arg_names: Union[str, List[str]]) -> Union[str, List[str]]:
+    """ Finds the argument/s with name arg_names in the list of arguments args_ls and returns its value/s.
+    
+    Args:
+        - args (list of str): List of strings containing the arguments to be searched.
+
+        - arg_names (str or list of str): String or list of strings containing the names of the arguments to be searched for.       
+
+    Returns:
+        - arg_value (str or list of str): String or list of strings containing the values of the arguments found.
+
     """
-    Finds the argument with name arg_names (if its a string) in the list of arguments args_ls and returns its value.
-    If arg_names is a list of strings then returns a list of the values of the argument names in arg_names.
-    """
+
     def single_garg(arg_name):
         # Check if arg_name is a string
         if type(arg_name) != str:
@@ -73,5 +91,18 @@ def garg(args, arg_names):
     else:
         return single_garg(arg_names)
 
-def get_csv_slog(params = None, root_dir='slune_results'):
+def get_csv_saver(params: Optional[dict]= None, root_dir: Optional[str]='slune_results') -> BaseSaver:
+    """ Returns a SaverCsv object with the given parameters and root directory.
+
+    Args:
+        - params (dict, optional): Dictionary of parameters to be passed to the SaverCsv object, default is None.
+
+        - root_dir (str, optional): Path to the root directory to be used by the SaverCsv object, default is 'slune_results'.
+
+    Returns:
+        - SaverCsv (Saver): Saver object with the given parameters and root directory.
+            Initialized with a LoggerDefault object as its logger.
+    
+    """
+
     return SaverCsv(LoggerDefault(), params = params, root_dir=root_dir)

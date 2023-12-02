@@ -1,3 +1,5 @@
+![PyPI - Version](https://img.shields.io/pypi/v/:slune-lib)
+[![license](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/h-0-0/4aa01e058fee448070c587f6967037e4/raw/CodeCovSlune.json)
 
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/h-0-0/4aa01e058fee448070c587f6967037e4/raw/Tests-macos.json)
@@ -71,16 +73,16 @@ if __name__ == "__main__":
     test_y = [7, 8, 9]
     test_predictions = linear_regression_regularized(X, y, test_X, alpha)
 
-    # First let's load in a function that we can use to get a saver object that uses the default method of logging (we call this object a slog = saver + logger). The saving will be coordinated by a csv saver object which saves and reads results from csv files stored in a hierarchy of directories.
-    from slune import get_csv_slog
-    csv_slog = get_csv_slog(params = args)
+    # First let's load in a function that we can use to get a saver object that uses the default method of logging. The saving will be coordinated by a csv saver object which saves and reads results from csv files stored in a hierarchy of directories.
+    from slune import get_csv_saver
+    csv_saver = get_csv_saver(params = args)
 
     # Let's now calculate the mean squared error of our predictions and log it!
     mse = mean((test_y[i] - test_predictions[i])**2 for i in range(len(test_y)))
-    csv_slog.log({'mse': mse})
+    csv_saver.log({'mse': mse})
 
     # Let's now save our logged results!
-    slog.save_collated()
+    csv_saver.save_collated()
 ```
 Now let's write some code that will submit some jobs to train our model using different hyperparameters!!
 ```python
@@ -90,29 +92,28 @@ from slune.searchers import SearcherGrid
 grid_searcher = SearcherGrid({'alpha' : [0.25, 0.5, 0.75]}, runs = 1)
 
 # Let's now import a function which will submit a job for our model, the script_path specifies the path to the script that contains the model we want to train. The template_path specifies the path to the template script that we want to specify the job with, cargs is a list of constant arguments we want to pass to the script for each tuning. 
-# We set slog to None as we don't want to not run jobs if we have already run them before.
+# We set saver to None as we don't want to not run jobs if we have already run them before.
 from slune import sbatchit
 script_path = 'model.py'
 template_path = 'template.sh'
-sbatchit(script_path, template_path, grid_searcher, cargs=[], slog=None)
+sbatchit(script_path, template_path, grid_searcher, cargs=[], saver=None)
 ```
 Now we've submitted our jobs we will wait for them to finish 🕛🕐🕑🕒🕓🕔🕕🕖🕗🕘🕙🕚🕛, now that they are finished we can read the results!
 ```python
-from slune import get_csv_slog
-csv_slog = get_csv_slog(params = None)
-params, value = csv_slog.read(params = [], metric_name = 'mse', select_by ='min')
+from slune import get_csv_saver
+csv_saver = get_csv_saver(params = None)
+params, value = csv_saver.read(params = [], metric_name = 'mse', select_by ='min')
 print(f'Best hyperparameters: {params}')
 print(f'Their MSE: {value}')
 ```
 Amazing! 🥳 We have successfully used slune to train our model. I hope this gives you a good flavour of how you can use slune and how easy it is to use!
 
-Please check out the examples folder for notebooks detailing in more depth some potential ways you can use slune. The docs are not yet up and running 😢 but they are coming soon!
+Please check out the examples folder for notebooks detailing in more depth some potential ways you can use slune and of course please check out the docs! 
 
 ## Roadmap
 - Make package user friendly:
-    - Add github workflows to automate testing, check code coverage etc. 
     - Go through automation settings.
-    - Add documentation.
+    - Code of conduct.
     - Add to pypi.
 Still in early stages! First thing on the horizon is better integration with SLURM:
 - Set-up notifications for job completion, failure, etc.
@@ -120,7 +121,7 @@ Still in early stages! First thing on the horizon is better integration with SLU
 - Auto save logged results when finishing a job.
 - Automatically re-submit failed jobs.
 - Tools for monitoring and cancelling jobs. 
-Then it will be looking at adding more savers, loggers and searchers! For example integration with tensorboard, saving to one csv file (as opposed to a hierarchy of csv files in different directories) and different search methods like random search and cross validation. Finally, more helper functions!
+Then it will be looking at adding more savers, loggers and searchers! For example integration with tensorboard, saving to one csv file (as opposed to a hierarchy of csv files in different directories) and different search methods like random search and cross validation. It would perhaps also be beneficial to be able to interface with other languages like R and Julia. Finally, more helper functions!
 
 However, I am trying to keep this package as bloatless as possible to make it easy for you to tweak and configure to your individual needs. It's written in a simple and compartmentalized manner for this reason. You can of course use the helper functions and let slune handle everything under the hood, but, you can also very quickly and easily write your own classes to work with other savers, loggers and searchers to do as you please.
 

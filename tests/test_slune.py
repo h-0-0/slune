@@ -25,10 +25,10 @@ class TestSbatchit(unittest.TestCase):
         searcher = MagicMock()
         searcher.__iter__.return_value = [['arg1', 'arg2'], ['arg3', 'arg4']]
         cargs = ["carg1", "carg2"]
-        slog = None
+        saver = None
 
         # Act
-        sbatchit(script_path, template_path, searcher, cargs, slog)
+        sbatchit(script_path, template_path, searcher, cargs, saver)
 
         # Assert
         calls = [call(['sbatch', template_path, script_path, 'carg1', 'carg2', 'arg1', 'arg2'], check=True),
