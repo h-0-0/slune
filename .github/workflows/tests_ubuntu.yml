@@ -36,16 +36,14 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Set TESTS_PASSED env variable to true
-      run: |
-        echo "TESTS_PASSED=false" >> $GITHUB_ENV
-
     - name: Test with pytest and create coverage report
       run: |
         cd $GITHUB_WORKSPACE
         python -m pytest
-        if [ $? -eq 0 ]; then
+        if [ $? -eq 1 ]; then
           echo "TESTS_PASSED_${{ matrix.python-version }}=true" >> $GITHUB_ENV
+        else
+          echo "TESTS_PASSED_${{ matrix.python-version }}=false" >> $GITHUB_ENV
         fi
 
   create-badge:
