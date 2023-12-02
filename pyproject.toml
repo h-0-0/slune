@@ -16,7 +16,7 @@ license = {text = "MIT License"}
 classifiers = [
     "Programming Language :: Python :: 3",
 ]
-dynamic = ["version"]
+version = "0.0.2"
 dependencies = [
     'pandas',
     'coverage',
