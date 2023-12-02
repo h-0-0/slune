@@ -73,16 +73,16 @@ if __name__ == "__main__":
     test_y = [7, 8, 9]
     test_predictions = linear_regression_regularized(X, y, test_X, alpha)
 
-    # First let's load in a function that we can use to get a saver object that uses the default method of logging (we call this object a slog = saver + logger). The saving will be coordinated by a csv saver object which saves and reads results from csv files stored in a hierarchy of directories.
-    from slune import get_csv_slog
-    csv_slog = get_csv_slog(params = args)
+    # First let's load in a function that we can use to get a saver object that uses the default method of logging. The saving will be coordinated by a csv saver object which saves and reads results from csv files stored in a hierarchy of directories.
+    from slune import get_csv_saver
+    csv_saver = get_csv_saver(params = args)
 
     # Let's now calculate the mean squared error of our predictions and log it!
     mse = mean((test_y[i] - test_predictions[i])**2 for i in range(len(test_y)))
-    csv_slog.log({'mse': mse})
+    csv_saver.log({'mse': mse})
 
     # Let's now save our logged results!
-    slog.save_collated()
+    csv_saver.save_collated()
 ```
 Now let's write some code that will submit some jobs to train our model using different hyperparameters!!
 ```python
@@ -92,29 +92,28 @@ from slune.searchers import SearcherGrid
 grid_searcher = SearcherGrid({'alpha' : [0.25, 0.5, 0.75]}, runs = 1)
 
 # Let's now import a function which will submit a job for our model, the script_path specifies the path to the script that contains the model we want to train. The template_path specifies the path to the template script that we want to specify the job with, cargs is a list of constant arguments we want to pass to the script for each tuning. 
-# We set slog to None as we don't want to not run jobs if we have already run them before.
+# We set saver to None as we don't want to not run jobs if we have already run them before.
 from slune import sbatchit
 script_path = 'model.py'
 template_path = 'template.sh'
-sbatchit(script_path, template_path, grid_searcher, cargs=[], slog=None)
+sbatchit(script_path, template_path, grid_searcher, cargs=[], saver=None)
 ```
 Now we've submitted our jobs we will wait for them to finish 🕛🕐🕑🕒🕓🕔🕕🕖🕗🕘🕙🕚🕛, now that they are finished we can read the results!
 ```python
-from slune import get_csv_slog
-csv_slog = get_csv_slog(params = None)
-params, value = csv_slog.read(params = [], metric_name = 'mse', select_by ='min')
+from slune import get_csv_saver
+csv_saver = get_csv_saver(params = None)
+params, value = csv_saver.read(params = [], metric_name = 'mse', select_by ='min')
 print(f'Best hyperparameters: {params}')
 print(f'Their MSE: {value}')
 ```
 Amazing! 🥳 We have successfully used slune to train our model. I hope this gives you a good flavour of how you can use slune and how easy it is to use!
 
-Please check out the examples folder for notebooks detailing in more depth some potential ways you can use slune. The docs are not yet up and running 😢 but they are coming soon!
+Please check out the examples folder for notebooks detailing in more depth some potential ways you can use slune and of course please check out the docs! 
 
 ## Roadmap
 - Make package user friendly:
     - Go through automation settings.
     - Code of conduct.
-    - Contributing guidelines.
     - Add to pypi.
 Still in early stages! First thing on the horizon is better integration with SLURM:
 - Set-up notifications for job completion, failure, etc.

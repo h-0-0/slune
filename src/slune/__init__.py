@@ -4,10 +4,10 @@
 from .searchers import *
 from .savers import *
 from .loggers import *
-from .slune import submit_job, sbatchit, lsargs, garg, get_csv_slog
+from .slune import submit_job, sbatchit, lsargs, garg, get_csv_saver
 from . import base, utils
 
-# __all__ = ['submit_job', 'sbatchit', 'lsargs', 'garg', 'get_csv_slog',
+# __all__ = ['submit_job', 'sbatchit', 'lsargs', 'garg', 'get_csv_saver',
         #    'base', 'utils', 'default', 'grid', 'csv']
 
 import importlib.metadata

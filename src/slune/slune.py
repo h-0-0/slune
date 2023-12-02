@@ -91,7 +91,7 @@ def garg(args: List[str], arg_names: Union[str, List[str]]) -> Union[str, List[s
     else:
         return single_garg(arg_names)
 
-def get_csv_slog(params: Optional[dict]= None, root_dir: Optional[str]='slune_results') -> BaseSaver:
+def get_csv_saver(params: Optional[dict]= None, root_dir: Optional[str]='slune_results') -> BaseSaver:
     """ Returns a SaverCsv object with the given parameters and root directory.
 
     Args:
