@@ -17,6 +17,8 @@ Slune is barebones by design. This means that you can easily write code to integ
 
 Slune is flexible. In designing this package I've tried to make as few assumptions as possible meaning that it can be used for lots of stuff outside hyperparameter tuning! (or also within!) For example, you can get slune to give you paths for where to save things, submit lots of jobs in parallel for any sort of script and do grid search! and there's more to come!
 
+The docs are [here](https://h-0-0.github.io/slune/).
+
 ## Usage
 Let's go through a quick example of how we can use slune ... first let's define a model that we want to train:
 ```python
@@ -111,10 +113,6 @@ Amazing! 🥳 We have successfully used slune to train our model. I hope this gi
 Please check out the examples folder for notebooks detailing in more depth some potential ways you can use slune and of course please check out the docs! 
 
 ## Roadmap
-- Make package user friendly:
-    - Go through automation settings.
-    - Code of conduct.
-    - Add to pypi.
 Still in early stages! First thing on the horizon is better integration with SLURM:
 - Set-up notifications for job completion, failure, etc.
 - Auto job naming, job output naming and job output location saving.
@@ -133,5 +131,5 @@ pip install slune-lib
 To install latest dev version use (CURRENTLY RECOMENDED):
 ```bash
 # With https
-pip install "git+https://github.com/h-aze/slune.git#egg=slune-lib"
+pip install "git+https://github.com/h-0-0/slune.git#egg=slune-lib"
 ```
