@@ -167,4 +167,4 @@ cython_debug/
 coverage_report*
 
 # Don't include docs folder, this will be built by github actions
-docs
+docs/
