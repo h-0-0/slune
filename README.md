@@ -1,3 +1,4 @@
+![PyPI - Version](https://img.shields.io/pypi/v/:slune-lib)
 [![license](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/h-0-0/4aa01e058fee448070c587f6967037e4/raw/CodeCovSlune.json)
 
@@ -111,7 +112,6 @@ Please check out the examples folder for notebooks detailing in more depth some 
 
 ## Roadmap
 - Make package user friendly:
-    - Add documentation.
     - Go through automation settings.
     - Code of conduct.
     - Contributing guidelines.

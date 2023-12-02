@@ -1,5 +1,5 @@
 from typing import List, Optional, Union
-from slune.base import Searcher, Saver
+from slune.base import BaseSearcher, BaseSaver
 import subprocess
 import sys
 from slune.savers.csv import SaverCsv
@@ -22,7 +22,7 @@ def submit_job(sh_path: str, args: List[str]):
     except subprocess.CalledProcessError as e:
         print(f"Error running sbatch: {e}")
 
-def sbatchit(script_path: str, sbatch_path: str, searcher: Searcher, cargs: Optional[List]=[], saver: Optional[Saver]=None):
+def sbatchit(script_path: str, sbatch_path: str, searcher: BaseSearcher, cargs: Optional[List]=[], saver: Optional[BaseSaver]=None):
     """ Submits jobs based on arguments given by searcher.
 
     For each job runs the script stored at script_path with selected parameter values given by searcher
@@ -91,7 +91,7 @@ def garg(args: List[str], arg_names: Union[str, List[str]]) -> Union[str, List[s
     else:
         return single_garg(arg_names)
 
-def get_csv_slog(params: Optional[dict]= None, root_dir: Optional[str]='slune_results') -> Saver:
+def get_csv_slog(params: Optional[dict]= None, root_dir: Optional[str]='slune_results') -> BaseSaver:
     """ Returns a SaverCsv object with the given parameters and root directory.
 
     Args:
