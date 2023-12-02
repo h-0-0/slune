@@ -108,7 +108,7 @@ params, value = csv_saver.read(params = [], metric_name = 'mse', select_by ='min
 print(f'Best hyperparameters: {params}')
 print(f'Their MSE: {value}')
 ```
-Amazing! 🥳 We have successfully used slune to train our model. I hope this gives you a good flavour of how you can use slune and how easy it is to use!
+Amazing! 🥳 We have successfully used slune to train our model. I hope this gives you a good idea of how you can use slune and how easy it is to use!
 
 Please check out the examples folder for notebooks detailing in more depth some potential ways you can use slune and of course please check out the docs! 
 
