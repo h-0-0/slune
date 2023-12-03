@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-env:
-  TEST_RESULTS: ()
-
 jobs:
   build:
 
@@ -44,12 +41,10 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         python -m pytest
-        echo $TEST_RESULTS
-        echo ${TEST_RESULTS}
         if [ $? -eq 0 ]; then
-          ${TEST_RESULTS}=("${TEST_RESULTS[@]}" "true")
+          echo "true" >> results.txt
         else
-          ${TEST_RESULTS}=("${TEST_RESULTS[@]}" "false")
+          echo "false" >> results.txt
         fi
 
   create-badge:
@@ -59,14 +54,17 @@ jobs:
       - name: Determine overall badge color
         id: determine-color
         run: |
-          overall_status="passed"
-          for i in "${TEST_RESULTS[@]}"; do
-            echo "Test result: $i"
-            if [ "$i" != "true" ]; then
-              overall_status="failed"
-              break
+          overall_status="passed" 
+          RESULTS=$(cat results.txt)
+          # Loop through each line in the file
+          while IFS= read -r line; do
+            echo "Processing result: $line"
+            if [[ "$line" == *"false"* ]]; then
+              echo "Setting overall_status to failed"
+              overall_status=failed
             fi
-          done
+          done < results.txt
+          
           echo "::set-output name=overall_status::${overall_status}"
 
           echo "COVERAGE=${overall_status}"
