@@ -7,6 +7,20 @@ on:
     branches: [ "main" ]
 
 jobs:
+  initialize:
+    runs-on: macos-latest
+
+    steps:
+      - name: Create results.txt
+        run: |
+          echo "RESULTS" > results.txt
+
+      - name: Upload results.txt
+        uses: actions/upload-artifact@v2
+        with:
+          name: results
+          path: results.txt
+
   build:
 
     runs-on: macos-latest
@@ -36,6 +50,11 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
+    - name: Download results.txt
+      uses: actions/download-artifact@v2
+      with:
+        name: results
+
     - name: Test with pytest
       id: pytest
       run: |
@@ -47,12 +66,6 @@ jobs:
           echo "false" >> results.txt
         fi
 
-    - name: Upload results.txt
-      uses: actions/upload-artifact@v2
-      with:
-        name: results
-        path: results.txt
-
   create-badge:
     needs: build
     runs-on: macos-latest
@@ -61,7 +74,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: results
-          path: results.txt
         
       - name: Determine overall badge color
         id: determine-color
