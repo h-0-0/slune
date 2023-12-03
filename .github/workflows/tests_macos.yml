@@ -8,7 +8,7 @@ on:
 
 env:
   TEST_RESULTS: ()
-  PY_V: (3.9 3.10 3.11)
+  PY_V: [3.9 3.10 3.11]
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: fromJson( ${{ PY_V }} )
+        python-version: fromJson( ${{ env.PY_V }} )
 
     steps:
     - uses: actions/checkout@v3
