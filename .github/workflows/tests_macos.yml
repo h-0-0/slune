@@ -45,12 +45,11 @@ jobs:
         cd $GITHUB_WORKSPACE
         python -m pytest
         echo $TEST_RESULTS
-        echo env.TEST_RESULTS
         echo ${TEST_RESULTS}
         if [ $? -eq 0 ]; then
-          $TEST_RESULTS+=("true")
+          ${TEST_RESULTS}+=("true")
         else
-          $TEST_RESULTS+=("false")
+          ${TEST_RESULTS}+=("false")
         fi
 
   create-badge:
