@@ -45,9 +45,9 @@ jobs:
         cd $GITHUB_WORKSPACE
         python -m pytest
         if [ $? -eq 0 ]; then
-          env.TEST_RESULTS+=(true)
+          $TEST_RESULTS+=("true")
         else
-          env.TEST_RESULTS+=(false)
+          $TEST_RESULTS+=("false")
         fi
 
   create-badge:
