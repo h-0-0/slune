@@ -47,10 +47,22 @@ jobs:
           echo "false" >> results.txt
         fi
 
+    - name: Upload results.txt
+      uses: actions/upload-artifact@v2
+      with:
+        name: results
+        path: results.txt
+
   create-badge:
     needs: build
     runs-on: macos-latest
     steps:
+      - name: Download results.txt
+        uses: actions/download-artifact@v2
+        with:
+          name: results
+          path: results.txt
+        
       - name: Determine overall badge color
         id: determine-color
         run: |
@@ -64,7 +76,7 @@ jobs:
               overall_status=failed
             fi
           done < results.txt
-          
+
           echo "::set-output name=overall_status::${overall_status}"
 
           echo "COVERAGE=${overall_status}"
