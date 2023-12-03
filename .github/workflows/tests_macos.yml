@@ -8,7 +8,7 @@ on:
 
 env:
   TEST_RESULTS: ()
-  PY_V: ("3.9", "3.10", "3.11")
+  PY_V: (3.9 3.10 3.11)
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: $PY_V 
+        python-version: fromJson( ${{ env.PY_V }} )
 
     steps:
     - uses: actions/checkout@v3
@@ -46,9 +46,9 @@ jobs:
         cd $GITHUB_WORKSPACE
         python -m pytest
         if [ $? -eq 0 ]; then
-          TEST_RESULTS+=("true")
+          env.TEST_RESULTS+=("true")
         else
-          TEST_RESULTS+=("false")
+          env.TEST_RESULTS+=("false")
         fi
 
   create-badge:
