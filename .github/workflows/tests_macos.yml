@@ -8,7 +8,7 @@ on:
 
 env:
   TEST_RESULTS: ()
-  PY_V: [3.9 3.10 3.11]
+  PY_V: ("3.9" "3.10" "3.11")
 
 jobs:
   build:
