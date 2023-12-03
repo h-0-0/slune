@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: $PY_V
+        python-version: ${{fromJson(env.PY_V)}}
 
     steps:
     - uses: actions/checkout@v3
