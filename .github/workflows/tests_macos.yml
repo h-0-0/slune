@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  TEST_RESULTS: ()
+  PY_V: ["3.9", "3.10", "3.11"]
+
 jobs:
   build:
 
@@ -13,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: $PY_V
 
     steps:
     - uses: actions/checkout@v3
@@ -42,9 +46,9 @@ jobs:
         cd $GITHUB_WORKSPACE
         python -m pytest
         if [ $? -eq 0 ]; then
-          echo "::set-output name=TESTS_PASSED_${{ matrix.python-version }}::true"
+          TEST_RESULTS+=("true")
         else
-          echo "::set-output name=TESTS_PASSED_${{ matrix.python-version }}::false"
+          TEST_RESULTS+=("false")
         fi
 
   create-badge:
@@ -55,10 +59,9 @@ jobs:
         id: determine-color
         run: |
           overall_status="passed"
-          for python_version in "3.9" "3.10" "3.11"; do
-            env_var= ${{ steps.pytest.outputs.TESTS_PASSED_${{ python_version }} }}
-            echo "ENV_VAR=${env_var}"
-            if [ "${env_var}" != "true" ]; then
+          for i in "${TEST_RESULTS[@]}"; do
+            echo "Test result: $i"
+            if [ "$i" != "true" ]; then
               overall_status="failed"
               break
             fi
