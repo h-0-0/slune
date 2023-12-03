@@ -44,10 +44,10 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE
         python -m pytest
+        echo $TEST_RESULTS
+        echo env.TEST_RESULTS
+        echo ${TEST_RESULTS}
         if [ $? -eq 0 ]; then
-          echo $TEST_RESULTS
-          echo env.TEST_RESULTS
-          echo ${TEST_RESULTS}
           $TEST_RESULTS+=("true")
         else
           $TEST_RESULTS+=("false")
