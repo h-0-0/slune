@@ -1,4 +1,4 @@
-![PyPI - Version](https://img.shields.io/pypi/v0.0.2/:slune-lib)
+[![PyPI version](https://badge.fury.io/py/slune-lib.svg)](https://badge.fury.io/py/slune-lib)
 [![license](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 ![badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/h-0-0/4aa01e058fee448070c587f6967037e4/raw/CodeCovSlune.json)
 
