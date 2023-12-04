@@ -17,6 +17,7 @@
         <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
         <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
         <div>
+            <img src="https://github.com/h-0-0/slune/slune.jpeg" class="logo" alt="project logo"/>
 
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
@@ -30,6 +31,7 @@
     <li><a href="#installation">Installation</a></li>
   </ul></li>
   <li><a href="#class-design">Class Design</a></li>
+  <li><a href="#contributing">Contributing</a></li>
 </ul>
 
 
@@ -69,6 +71,8 @@ src    </h1>
 <p>Slune is barebones by design. This means that you can easily write code to integrate with slune if you want to do something a bit different! You can also workout what each function is doing pretty easily. </p>
 
 <p>Slune is flexible. In designing this package I've tried to make as few assumptions as possible meaning that it can be used for lots of stuff outside hyperparameter tuning! (or also within!) For example, you can get slune to give you paths for where to save things, submit lots of jobs in parallel for any sort of script and do grid search! and there's more to come!</p>
+
+<p>The docs are <a href="https://h-0-0.github.io/slune/">here</a>.</p>
 
 <h2 id="usage">Usage</h2>
 
@@ -128,16 +132,16 @@ src    </h1>
     <span class="n">test_y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]</span>
     <span class="n">test_predictions</span> <span class="o">=</span> <span class="n">linear_regression_regularized</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_X</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
 
-    <span class="c1"># First let&#39;s load in a function that we can use to get a saver object that uses the default method of logging (we call this object a slog = saver + logger). The saving will be coordinated by a csv saver object which saves and reads results from csv files stored in a hierarchy of directories.</span>
-    <span class="kn">from</span> <span class="nn">slune</span> <span class="kn">import</span> <span class="n">get_csv_slog</span>
-    <span class="n">csv_slog</span> <span class="o">=</span> <span class="n">get_csv_slog</span><span class="p">(</span><span class="n">params</span> <span class="o">=</span> <span class="n">args</span><span class="p">)</span>
+    <span class="c1"># First let&#39;s load in a function that we can use to get a saver object that uses the default method of logging. The saving will be coordinated by a csv saver object which saves and reads results from csv files stored in a hierarchy of directories.</span>
+    <span class="kn">from</span> <span class="nn">slune</span> <span class="kn">import</span> <span class="n">get_csv_saver</span>
+    <span class="n">csv_saver</span> <span class="o">=</span> <span class="n">get_csv_saver</span><span class="p">(</span><span class="n">params</span> <span class="o">=</span> <span class="n">args</span><span class="p">)</span>
 
     <span class="c1"># Let&#39;s now calculate the mean squared error of our predictions and log it!</span>
     <span class="n">mse</span> <span class="o">=</span> <span class="n">mean</span><span class="p">((</span><span class="n">test_y</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">test_predictions</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_y</span><span class="p">)))</span>
-    <span class="n">csv_slog</span><span class="o">.</span><span class="n">log</span><span class="p">({</span><span class="s1">&#39;mse&#39;</span><span class="p">:</span> <span class="n">mse</span><span class="p">})</span>
+    <span class="n">csv_saver</span><span class="o">.</span><span class="n">log</span><span class="p">({</span><span class="s1">&#39;mse&#39;</span><span class="p">:</span> <span class="n">mse</span><span class="p">})</span>
 
     <span class="c1"># Let&#39;s now save our logged results!</span>
-    <span class="n">slog</span><span class="o">.</span><span class="n">save_collated</span><span class="p">()</span>
+    <span class="n">csv_saver</span><span class="o">.</span><span class="n">save_collated</span><span class="p">()</span>
 </code></pre>
 </div>
 
@@ -150,40 +154,34 @@ src    </h1>
 <span class="n">grid_searcher</span> <span class="o">=</span> <span class="n">SearcherGrid</span><span class="p">({</span><span class="s1">&#39;alpha&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]},</span> <span class="n">runs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># Let&#39;s now import a function which will submit a job for our model, the script_path specifies the path to the script that contains the model we want to train. The template_path specifies the path to the template script that we want to specify the job with, cargs is a list of constant arguments we want to pass to the script for each tuning. </span>
-<span class="c1"># We set slog to None as we don&#39;t want to not run jobs if we have already run them before.</span>
+<span class="c1"># We set saver to None as we don&#39;t want to not run jobs if we have already run them before.</span>
 <span class="kn">from</span> <span class="nn">slune</span> <span class="kn">import</span> <span class="n">sbatchit</span>
 <span class="n">script_path</span> <span class="o">=</span> <span class="s1">&#39;model.py&#39;</span>
 <span class="n">template_path</span> <span class="o">=</span> <span class="s1">&#39;template.sh&#39;</span>
-<span class="n">sbatchit</span><span class="p">(</span><span class="n">script_path</span><span class="p">,</span> <span class="n">template_path</span><span class="p">,</span> <span class="n">grid_searcher</span><span class="p">,</span> <span class="n">cargs</span><span class="o">=</span><span class="p">[],</span> <span class="n">slog</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">sbatchit</span><span class="p">(</span><span class="n">script_path</span><span class="p">,</span> <span class="n">template_path</span><span class="p">,</span> <span class="n">grid_searcher</span><span class="p">,</span> <span class="n">cargs</span><span class="o">=</span><span class="p">[],</span> <span class="n">saver</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </code></pre>
 </div>
 
 <p>Now we've submitted our jobs we will wait for them to finish 🕛🕐🕑🕒🕓🕔🕕🕖🕗🕘🕙🕚🕛, now that they are finished we can read the results!</p>
 
 <div class="pdoc-code codehilite">
-<pre><span></span><code><span class="kn">from</span> <span class="nn">slune</span> <span class="kn">import</span> <span class="n">get_csv_slog</span>
-<span class="n">csv_slog</span> <span class="o">=</span> <span class="n">get_csv_slog</span><span class="p">(</span><span class="n">params</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
-<span class="n">params</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">csv_slog</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">params</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">metric_name</span> <span class="o">=</span> <span class="s1">&#39;mse&#39;</span><span class="p">,</span> <span class="n">select_by</span> <span class="o">=</span><span class="s1">&#39;min&#39;</span><span class="p">)</span>
+<pre><span></span><code><span class="kn">from</span> <span class="nn">slune</span> <span class="kn">import</span> <span class="n">get_csv_saver</span>
+<span class="n">csv_saver</span> <span class="o">=</span> <span class="n">get_csv_saver</span><span class="p">(</span><span class="n">params</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+<span class="n">params</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">csv_saver</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">params</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">metric_name</span> <span class="o">=</span> <span class="s1">&#39;mse&#39;</span><span class="p">,</span> <span class="n">select_by</span> <span class="o">=</span><span class="s1">&#39;min&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Best hyperparameters: </span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Their MSE: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </code></pre>
 </div>
 
-<p>Amazing! 🥳 We have successfully used slune to train our model. I hope this gives you a good flavour of how you can use slune and how easy it is to use!</p>
+<p>Amazing! 🥳 We have successfully used slune to train our model. I hope this gives you a good idea of how you can use slune and how easy it is to use!</p>
 
-<p>Please check out the examples folder for notebooks detailing in more depth some potential ways you can use slune. The docs are not yet up and running 😢 but they are coming soon!</p>
+<p>Please check out the examples folder for notebooks detailing in more depth some potential ways you can use slune and of course please check out the docs! </p>
 
 <h2 id="roadmap">Roadmap</h2>
 
+<p>Still in early stages! First thing on the horizon is better integration with SLURM:</p>
+
 <ul>
-<li>Make package user friendly:
-<ul>
-<li>Go through automation settings.</li>
-<li>Code of conduct.</li>
-<li>Contributing guidelines.</li>
-<li>Add to pypi.
-Still in early stages! First thing on the horizon is better integration with SLURM:</li>
-</ul></li>
 <li>Set-up notifications for job completion, failure, etc.</li>
 <li>Auto job naming, job output naming and job output location saving.</li>
 <li>Auto save logged results when finishing a job.</li>
@@ -207,7 +205,7 @@ Then it will be looking at adding more savers, loggers and searchers! For exampl
 
 <div class="pdoc-code codehilite">
 <pre><span></span><code><span class="c1"># With https</span>
-pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;git+https://github.com/h-aze/slune.git#egg=slune-lib&quot;</span>
+pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;git+https://github.com/h-0-0/slune.git#egg=slune-lib&quot;</span>
 </code></pre>
 </div>
 
@@ -232,6 +230,20 @@ pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot
 <p>To create a new searcher, logger or saver, you must inherit from the appropriate base class and implement the required methods. The required methods will have the '@abc.abstractmethod' decorator above them and will throw errors if they are not implemented. The compulsory methods allow for well-defined interactions between the different classes and should allow for any combination of searcher, logger and saver to be used together. </p>
 
 <p>Please read the docs for the base classes to see what methods are required to be implemented and how they should be implemented.</p>
+
+<h1 id="contributing">Contributing</h1>
+
+<p>If you would like to contribute to slune please first familiarize yourself with the package by taking a look at the docs. In particular please read about the class design, the base classes and take a look at the code for the helper functions in the slune module. </p>
+
+<p>To contribute to the package please either submit a pull request for an open issue or open a new issue. If you are unsure about whether to open a new issue or in general have any problems please open a discussion in the discussions tab.</p>
+
+<p>Checklist for contributing:</p>
+
+<ul>
+<li><input type="checkbox" class="task-list-item-checkbox" disabled> Make sure that your code is well documented and that the documentation is clear and concise, use google style docstrings.</li>
+<li><input type="checkbox" class="task-list-item-checkbox" disabled> Make sure that your code is well tested and that the tests are clear and concise, want to keep coverage as high as possible! (minimum 90%) and keep tests as simple as possible!</li>
+<li><input type="checkbox" class="task-list-item-checkbox" disabled> Make sure that you only solve the issue that you are attempting to close, if you find other issues please open a new issue for them.</li>
+</ul>
 </div>
 
                         <input id="mod-src-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
@@ -241,7 +253,8 @@ pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot
                         <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">.. include:: ../README.md</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="sd">.. include:: ../CLASSDESIGN.md</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">4</span></a><span class="sd">.. include:: ../CONTRIBUTING.md</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">5</span></a><span class="sd">&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
