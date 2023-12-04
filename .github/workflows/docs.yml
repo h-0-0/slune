@@ -1,4 +1,4 @@
-name: website
+name: Documentation
 
 # build the documentation whenever there are new commits on main
 on:
@@ -28,8 +28,7 @@ jobs:
       - run: pip install pdoc
       # ADJUST THIS: build your documentation into docs/.
       # We use a custom build script for pdoc itself, ideally you just run `pdoc -o docs/ ...` here.
-      - run: pdoc --docformat google --logo "https://github.com/h-0-0/slune/blob/5ef13e03e671c280d4a7918c3b718cf73930f6ba/slune.jpeg" -o docs/.html src
-
+      - run: pdoc --docformat google --logo "https://raw.githubusercontent.com/h-0-0/slune/main/slune.jpeg" -o docs/.html src
       - uses: actions/upload-pages-artifact@v2
         with:
           path: docs/.html

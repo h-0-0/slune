@@ -22,6 +22,7 @@
   <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
 </svg>                &nbsp;src.slune</a>
 
+            <img src="https://github.com/h-0-0/slune/slune.jpeg" class="logo" alt="project logo"/>
 
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
@@ -43,7 +44,7 @@
                     <a class="function" href="#garg">garg</a>
             </li>
             <li>
-                    <a class="function" href="#get_csv_slog">get_csv_slog</a>
+                    <a class="function" href="#get_csv_saver">get_csv_saver</a>
             </li>
     </ul>
 
@@ -159,7 +160,7 @@
 </span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>    <span class="k">else</span><span class="p">:</span>
 </span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>        <span class="k">return</span> <span class="n">single_garg</span><span class="p">(</span><span class="n">arg_names</span><span class="p">)</span>
 </span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">def</span> <span class="nf">get_csv_slog</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span><span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;slune_results&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseSaver</span><span class="p">:</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="k">def</span> <span class="nf">get_csv_saver</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span><span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;slune_results&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseSaver</span><span class="p">:</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns a SaverCsv object with the given parameters and root directory.</span>
 </span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
 </span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">    Args:</span>
@@ -378,32 +379,32 @@ Can simply not give a Saver object if you want to rerun all jobs.</li>
 
 
                 </section>
-                <section id="get_csv_slog">
-                            <input id="get_csv_slog-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="get_csv_saver">
+                            <input id="get_csv_saver-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">get_csv_slog</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">root_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;slune_results&#39;</span></span><span class="return-annotation">) -> <span class="n">slune</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseSaver</span>:</span></span>
+        <span class="name">get_csv_saver</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>,</span><span class="param">	<span class="n">root_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;slune_results&#39;</span></span><span class="return-annotation">) -> <span class="n">slune</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">BaseSaver</span>:</span></span>
 
-                <label class="view-source-button" for="get_csv_slog-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="get_csv_saver-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#get_csv_slog"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="get_csv_slog-95"><a href="#get_csv_slog-95"><span class="linenos"> 95</span></a><span class="k">def</span> <span class="nf">get_csv_slog</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span><span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;slune_results&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseSaver</span><span class="p">:</span>
-</span><span id="get_csv_slog-96"><a href="#get_csv_slog-96"><span class="linenos"> 96</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns a SaverCsv object with the given parameters and root directory.</span>
-</span><span id="get_csv_slog-97"><a href="#get_csv_slog-97"><span class="linenos"> 97</span></a>
-</span><span id="get_csv_slog-98"><a href="#get_csv_slog-98"><span class="linenos"> 98</span></a><span class="sd">    Args:</span>
-</span><span id="get_csv_slog-99"><a href="#get_csv_slog-99"><span class="linenos"> 99</span></a><span class="sd">        - params (dict, optional): Dictionary of parameters to be passed to the SaverCsv object, default is None.</span>
-</span><span id="get_csv_slog-100"><a href="#get_csv_slog-100"><span class="linenos">100</span></a>
-</span><span id="get_csv_slog-101"><a href="#get_csv_slog-101"><span class="linenos">101</span></a><span class="sd">        - root_dir (str, optional): Path to the root directory to be used by the SaverCsv object, default is &#39;slune_results&#39;.</span>
-</span><span id="get_csv_slog-102"><a href="#get_csv_slog-102"><span class="linenos">102</span></a>
-</span><span id="get_csv_slog-103"><a href="#get_csv_slog-103"><span class="linenos">103</span></a><span class="sd">    Returns:</span>
-</span><span id="get_csv_slog-104"><a href="#get_csv_slog-104"><span class="linenos">104</span></a><span class="sd">        - SaverCsv (Saver): Saver object with the given parameters and root directory.</span>
-</span><span id="get_csv_slog-105"><a href="#get_csv_slog-105"><span class="linenos">105</span></a><span class="sd">            Initialized with a LoggerDefault object as its logger.</span>
-</span><span id="get_csv_slog-106"><a href="#get_csv_slog-106"><span class="linenos">106</span></a><span class="sd">    </span>
-</span><span id="get_csv_slog-107"><a href="#get_csv_slog-107"><span class="linenos">107</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="get_csv_slog-108"><a href="#get_csv_slog-108"><span class="linenos">108</span></a>
-</span><span id="get_csv_slog-109"><a href="#get_csv_slog-109"><span class="linenos">109</span></a>    <span class="k">return</span> <span class="n">SaverCsv</span><span class="p">(</span><span class="n">LoggerDefault</span><span class="p">(),</span> <span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="n">root_dir</span><span class="p">)</span>
+    <a class="headerlink" href="#get_csv_saver"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="get_csv_saver-95"><a href="#get_csv_saver-95"><span class="linenos"> 95</span></a><span class="k">def</span> <span class="nf">get_csv_saver</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span><span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span><span class="o">=</span><span class="s1">&#39;slune_results&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BaseSaver</span><span class="p">:</span>
+</span><span id="get_csv_saver-96"><a href="#get_csv_saver-96"><span class="linenos"> 96</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot; Returns a SaverCsv object with the given parameters and root directory.</span>
+</span><span id="get_csv_saver-97"><a href="#get_csv_saver-97"><span class="linenos"> 97</span></a>
+</span><span id="get_csv_saver-98"><a href="#get_csv_saver-98"><span class="linenos"> 98</span></a><span class="sd">    Args:</span>
+</span><span id="get_csv_saver-99"><a href="#get_csv_saver-99"><span class="linenos"> 99</span></a><span class="sd">        - params (dict, optional): Dictionary of parameters to be passed to the SaverCsv object, default is None.</span>
+</span><span id="get_csv_saver-100"><a href="#get_csv_saver-100"><span class="linenos">100</span></a>
+</span><span id="get_csv_saver-101"><a href="#get_csv_saver-101"><span class="linenos">101</span></a><span class="sd">        - root_dir (str, optional): Path to the root directory to be used by the SaverCsv object, default is &#39;slune_results&#39;.</span>
+</span><span id="get_csv_saver-102"><a href="#get_csv_saver-102"><span class="linenos">102</span></a>
+</span><span id="get_csv_saver-103"><a href="#get_csv_saver-103"><span class="linenos">103</span></a><span class="sd">    Returns:</span>
+</span><span id="get_csv_saver-104"><a href="#get_csv_saver-104"><span class="linenos">104</span></a><span class="sd">        - SaverCsv (Saver): Saver object with the given parameters and root directory.</span>
+</span><span id="get_csv_saver-105"><a href="#get_csv_saver-105"><span class="linenos">105</span></a><span class="sd">            Initialized with a LoggerDefault object as its logger.</span>
+</span><span id="get_csv_saver-106"><a href="#get_csv_saver-106"><span class="linenos">106</span></a><span class="sd">    </span>
+</span><span id="get_csv_saver-107"><a href="#get_csv_saver-107"><span class="linenos">107</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="get_csv_saver-108"><a href="#get_csv_saver-108"><span class="linenos">108</span></a>
+</span><span id="get_csv_saver-109"><a href="#get_csv_saver-109"><span class="linenos">109</span></a>    <span class="k">return</span> <span class="n">SaverCsv</span><span class="p">(</span><span class="n">LoggerDefault</span><span class="p">(),</span> <span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="n">root_dir</span><span class="p">)</span>
 </span></pre></div>
 
 
