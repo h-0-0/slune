@@ -22,7 +22,7 @@ jobs:
           path: results.txt
 
   build:
-
+    needs: initialize
     runs-on: macos-latest
     strategy:
       fail-fast: false
