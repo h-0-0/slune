@@ -7,8 +7,22 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  initialize:
+    runs-on: macos-latest
 
+    steps:
+      - name: Create results.txt
+        run: |
+          echo "RESULTS" > results.txt
+
+      - name: Upload results.txt
+        uses: actions/upload-artifact@v2
+        with:
+          name: results
+          path: results.txt
+
+  build:
+    needs: initialize
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -36,32 +50,46 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Test with pytest and create coverage report
+    - name: Download results.txt
+      uses: actions/download-artifact@v2
+      with:
+        name: results
+
+    - name: Test with pytest
+      id: pytest
       run: |
         cd $GITHUB_WORKSPACE
         python -m pytest
         if [ $? -eq 0 ]; then
-          echo "TESTS_PASSED_${{ matrix.python-version }}=true" >> $GITHUB_ENV
+          echo "true" >> results.txt
         else
-          echo "TESTS_PASSED_${{ matrix.python-version }}=false" >> $GITHUB_ENV
+          echo "false" >> results.txt
         fi
 
   create-badge:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Download results.txt
+        uses: actions/download-artifact@v2
+        with:
+          name: results
+
       - name: Determine overall badge color
         id: determine-color
         run: |
           overall_status="passed"
-          for python_version in "3.9" "3.10" "3.11"; do
-            env_var="TESTS_PASSED_${python_version}"
-            echo "ENV_VAR=${env_var}"
-            if [ "${env_var}" != "true" ]; then
-              overall_status="failed"
-              break
+
+          RESULTS=$(cat results.txt)
+          # Loop through each line in the file
+          while IFS= read -r line; do
+            echo "Processing result: $line"
+            if [[ "$line" == *"false"* ]]; then
+              echo "Setting overall_status to failed"
+              overall_status=failed
             fi
-          done
+          done < results.txt
+
           echo "::set-output name=overall_status::${overall_status}"
 
           echo "COVERAGE=${overall_status}"
