@@ -124,11 +124,11 @@ Then it will be looking at adding more savers, loggers and searchers! For exampl
 However, I am trying to keep this package as bloatless as possible to make it easy for you to tweak and configure to your individual needs. It's written in a simple and compartmentalized manner for this reason. You can of course use the helper functions and let slune handle everything under the hood, but, you can also very quickly and easily write your own classes to work with other savers, loggers and searchers to do as you please.
 
 ## Installation
-To install latest version use:
+To install latest release use:
 ```bash
 pip install slune-lib
 ```
-To install latest dev version use (CURRENTLY RECOMENDED):
+To install latest dev version use:
 ```bash
 # With https
 pip install "git+https://github.com/h-0-0/slune.git#egg=slune-lib"

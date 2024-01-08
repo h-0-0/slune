@@ -132,7 +132,7 @@ def get_all_paths(dirs: List[str], root_directory: Optional[str]='.') -> List[st
     Finds all paths of csv files in all subdirectories of the root directory that have a directory in their path matching one of each of all the parameters given.
 
     Args:
-        - dirs (list of str): List of directory names we want returned paths to have in their path.
+        - dirs (list of str): List of directory names we want returned paths to have in their path. Checks equivalence of values if the directory name is in the form '--string=value'.
         - root_directory (str, optional): Path to the root directory to be searched, default is current working directory.
 
     Returns:
@@ -144,6 +144,21 @@ def get_all_paths(dirs: List[str], root_directory: Optional[str]='.') -> List[st
     matches = []
     for csv in all_csv:
         path = csv.split(os.path.sep)
-        if all([p in path for p in dirs]):
+        for p in dirs:
+            if '=' in p:
+                param, value = p.split('=')
+                for dir in path:
+                    if dir.startswith(param + '='):
+                        _, dir_value = dir.split('=')
+                        try:
+                            if float(value) == float(dir_value):
+                                break
+                        except ValueError:
+                            pass
+                else:
+                    break
+            elif p not in path:
+                break
+        else:
             matches.append(csv)
     return matches

@@ -47,14 +47,14 @@ class SaverCsv(BaseSaver):
 
     """
 
-    def __init__(self, logger_instance: BaseLogger, params: List[str] = None, root_dir: Optional[str] = os.path.join('.', 'tuning_results')):
+    def __init__(self, logger_instance: BaseLogger, params: List[str] = None, root_dir: Optional[str] = os.path.join('.', 'slune_results')):
         """ Initialises the csv saver. 
 
         Args:
             - logger_instance (BaseLogger): Instance of a logger class that inherits from BaseLogger.
             - params (list, optional): List of strings containing the parameters used, in form ["--parameter_name=parameter_value", ...], default is None.
                 If None, we will create a path using the parameters given in the log.
-            - root_dir (str, optional): Path to the root directory where we will store the csv files, default is './tuning_results'.
+            - root_dir (str, optional): Path to the root directory where we will store the csv files, default is './slune_results'.
         
         """
 
