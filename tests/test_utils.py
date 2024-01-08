@@ -203,9 +203,9 @@ class TestGetAllPaths(unittest.TestCase):
         self.csv_files = [
             os.path.join('dir1','file1.csv'),
             os.path.join('dir2','file2.csv'),
-            os.path.join('dir1','subdir1','file3.csv'),
-            os.path.join('dir2','subdir2','file4.csv'),
-            os.path.join('dir2','subdir2','subdir3','file5.csv')
+            os.path.join('dir1','--subdir=1','file3.csv'),
+            os.path.join('dir2','--subdir=2','file4.csv'),
+            os.path.join('dir2','--subdir=2','--subdir=3','file5.csv')
         ]
 
         for file in self.csv_files:
@@ -225,11 +225,11 @@ class TestGetAllPaths(unittest.TestCase):
 
     def test_one_match(self):
         # Call the function to get the result
-        result = get_all_paths(['dir1', 'subdir1'], self.test_dir)
+        result = get_all_paths(['dir1', '--subdir=1'], self.test_dir)
 
         # Define the expected result based on the files we created
         expected_result = [
-            os.path.join(self.test_dir, 'dir1','subdir1','file3.csv')
+            os.path.join(self.test_dir, 'dir1','--subdir=1','file3.csv')
         ]
 
         # Sort both lists for comparison, as the order might not be guaranteed
@@ -241,12 +241,12 @@ class TestGetAllPaths(unittest.TestCase):
     
     def test_multi_match(self):
         # Call the function to get the result
-        result = get_all_paths(['dir2', 'subdir2'], self.test_dir)
+        result = get_all_paths(['dir2', '--subdir=2'], self.test_dir)
 
         # Define the expected result based on the files we created
         expected_result = [
-            os.path.join(self.test_dir, 'dir2','subdir2','file4.csv'),
-            os.path.join(self.test_dir, 'dir2','subdir2','subdir3','file5.csv')
+            os.path.join(self.test_dir, 'dir2','--subdir=2','file4.csv'),
+            os.path.join(self.test_dir, 'dir2','--subdir=2','--subdir=3','file5.csv')
         ]
 
         # Sort both lists for comparison, as the order might not be guaranteed
@@ -263,7 +263,7 @@ class TestGetAllPaths(unittest.TestCase):
         # Define the expected result based on the files we created
         expected_result = [
             os.path.join(self.test_dir, 'dir1','file1.csv'),
-            os.path.join(self.test_dir, 'dir1','subdir1','file3.csv')
+            os.path.join(self.test_dir, 'dir1','--subdir=1','file3.csv')
         ]
 
         # Sort both lists for comparison, as the order might not be guaranteed
@@ -289,11 +289,11 @@ class TestGetAllPaths(unittest.TestCase):
 
     def test_params_deep(self):
         # Call the function to get the result
-        result = get_all_paths(['subdir3'], self.test_dir)
+        result = get_all_paths(['--subdir=3'], self.test_dir)
 
         # Define the expected result based on the files we created
         expected_result = [
-            os.path.join(self.test_dir, 'dir2','subdir2','subdir3','file5.csv')
+            os.path.join(self.test_dir, 'dir2','--subdir=2','--subdir=3','file5.csv')
         ]
 
         # Sort both lists for comparison, as the order might not be guaranteed
@@ -305,11 +305,11 @@ class TestGetAllPaths(unittest.TestCase):
     
     def test_root_has_forwardslash(self):
         # Call the function to get the result
-        result = get_all_paths(['subdir1'], os.path.join(self.test_dir, 'dir1'))
+        result = get_all_paths(['--subdir=1'], os.path.join(self.test_dir, 'dir1'))
 
         # Define the expected result based on the files we created
         expected_result = [
-            os.path.join(self.test_dir, 'dir1','subdir1','file3.csv')
+            os.path.join(self.test_dir, 'dir1','--subdir=1','file3.csv')
         ]
 
         # Sort both lists for comparison, as the order might not be guaranteed
@@ -318,6 +318,40 @@ class TestGetAllPaths(unittest.TestCase):
 
         # Assert that the result matches the expected result
         self.assertEqual(result, expected_result)
+
+    def test_numerically_equiv(self):
+        # Call the function to get the result
+        result = get_all_paths(['--subdir=2.0'], self.test_dir)
+
+        # Define the expected result based on the files we created
+        expected_result = [
+            os.path.join(self.test_dir, 'dir2','--subdir=2','file4.csv'),
+            os.path.join(self.test_dir, 'dir2','--subdir=2','--subdir=3','file5.csv')
+        ]
+
+        # Sort both lists for comparison, as the order might not be guaranteed
+        result.sort()
+        expected_result.sort()
+
+        # Assert that the result matches the expected result
+        self.assertEqual(result, expected_result)
+
+    def test_numerically_equiv_multi(self):
+        # Call the function to get the result
+        result = get_all_paths(['--subdir=2.00', '--subdir=3e0'], self.test_dir)
+
+        # Define the expected result based on the files we created
+        expected_result = [
+            os.path.join(self.test_dir, 'dir2','--subdir=2','--subdir=3','file5.csv')
+        ]
+
+        # Sort both lists for comparison, as the order might not be guaranteed
+        result.sort()
+        expected_result.sort()
+
+        # Assert that the result matches the expected result
+        self.assertEqual(result, expected_result)
+
 
 if __name__ == '__main__':
     unittest.main()
