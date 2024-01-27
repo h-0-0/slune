@@ -144,6 +144,7 @@ def get_all_paths(dirs: List[str], root_directory: Optional[str]='.') -> List[st
     matches = []
     for csv in all_csv:
         path = csv.split(os.path.sep)
+        contains = []
         for p in dirs:
             if '=' in p:
                 param, value = p.split('=')
@@ -152,13 +153,12 @@ def get_all_paths(dirs: List[str], root_directory: Optional[str]='.') -> List[st
                         _, dir_value = dir.split('=')
                         try:
                             if float(value) == float(dir_value):
-                                break
+                                contains.append(p)
                         except ValueError:
-                            pass
-                else:
-                    break
-            elif p not in path:
-                break
-        else:
+                            if value == dir_value:
+                                contains.append(p)
+            elif p in path:
+                contains.append(p)
+        if len(contains) == len(dirs):
             matches.append(csv)
     return matches

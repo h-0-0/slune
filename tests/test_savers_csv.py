@@ -381,6 +381,113 @@ class TestSaverCsvReadMethod(unittest.TestCase):
         # Remove the results file
         os.remove(os.path.join(self.test_dir, 'dir2','subdir2','subdir3','more_results.csv'))
 
+class TestSaverCsvReadMethod_WithParamValueFormat(unittest.TestCase):
+    
+        def setUp(self):
+            # Create a temporary directory with some CSV files for testing
+            self.test_dir = 'test_directory'
+            os.makedirs(self.test_dir, exist_ok=True)
+    
+            # Creating some CSV files with specific subdirectory paths
+            self.csv_files = [
+                os.path.join('--param1=1','--param2=True','--param3=3','results_0.csv'),
+                os.path.join('--param1=1','--param2=True','--param3=3','results_1.csv'),
+                os.path.join('--param1=1','--param2=False','--param3=3','results_0.csv'),
+                os.path.join('--param1=string', '--param2=1', '--param3=3', 'results_0.csv'),
+            ]
+
+            for i, file in enumerate(self.csv_files):
+                file_path = os.path.join(self.test_dir, file)
+                os.makedirs(os.path.dirname(file_path), exist_ok=True)
+                # Create a data frame with different values for each CSV file
+                results = pd.DataFrame({'a': [i+1,i+2,i+3], 'b': [i+4,i+5,i+6]})
+                # Save the results
+                results.to_csv(file_path, mode='w', index=False)
+            # The data frames we created should look like this:
+            # --param1=1/--param2=True/--param3=3/results_0.csv: 
+            #   a b
+            #   1 4
+            #   2 5
+            #   3 6
+            # --param1=1/--param2=True/--param3=3/results_1.csv:
+            #   a b
+            #   2 5
+            #   3 6
+            #   4 7
+            # --param1=1/--param2=False/--param3=3/results_0.csv:
+            #   a b
+            #   3 6
+            #   4 7
+            #   5 8
+            # --param1=string/--param2=1/--param3=3/results_0.csv:
+            #   a b
+            #   4 7
+            #   5 8
+            #   6 9
+                
+        def tearDown(self):
+            # Clean up the temporary directory and files after testing
+            for root, dirs, files in os.walk(self.test_dir, topdown=False):
+                for name in files:
+                    os.remove(os.path.join(root, name))
+                for name in dirs:
+                    os.rmdir(os.path.join(root, name))
+            os.rmdir(self.test_dir)
+
+        def test_read_max_metric(self):
+            # Create some params to use for testing
+            params = ['--param1=1', '--param2=True', '--param3=3']
+            # Create an instance of SaverCsv
+            saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+
+            # Call the read method to get min and max values
+            max_param_a, max_value_a = saver.read(params, 'a', select_by='max')
+            max_param_b, max_value_b = saver.read(params, 'b', select_by='max')
+
+            # Perform assertions based on your expectations
+            self.assertEqual(max_param_a, ['--param1=1', '--param2=True', '--param3=3'])
+            self.assertEqual(max_param_b, ['--param1=1', '--param2=True', '--param3=3'])
+            self.assertEqual(max_value_a, 3.5)
+            self.assertEqual(max_value_b, 6.5)
+
+        def test_read_min_metric(self):
+            # Create some params to use for testing
+            params = ['--param1=1', '--param2=True', '--param3=3']
+            # Create an instance of SaverCsv
+            saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+
+            # Call the read method to get min and max values
+            min_param_a, min_value_a = saver.read(params, 'a', select_by='min')
+            min_param_b, min_value_b = saver.read(params, 'b', select_by='min')
+
+            # Perform assertions based on your expectations
+            self.assertEqual(min_param_a, ['--param1=1', '--param2=True', '--param3=3'])
+            self.assertEqual(min_param_b, ['--param1=1', '--param2=True', '--param3=3'])
+            self.assertEqual(min_value_a, 1.5)
+            self.assertEqual(min_value_b, 4.5)
+
+        def test_read_nonexistent_metric(self):
+            # Create some params to use for testing
+            params = ['--param1=1', '--param2=True', '--param3=3']
+            # Create an instance of SaverCsv
+            saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+
+            # Call the read method to get min and max values
+            with self.assertRaises(KeyError):
+                saver.read(params, 'c')
+
+        def test_value_exists_both_str_float(self):
+            # Create some params to use for testing
+            params = ['--param1=string']
+            # Create an instance of SaverCsv
+            saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+
+            # Call the read method to get min values
+            param, value = saver.read(params, 'a', select_by='min')
+
+            # Perform assertions based on your expectations
+            self.assertEqual(param, ['--param1=string', '--param2=1', '--param3=3'])
+            self.assertEqual(value, 4)                
 
 
 if __name__ == "__main__":
