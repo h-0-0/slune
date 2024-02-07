@@ -216,7 +216,8 @@ class SaverCsv(BaseSaver):
         """ Finds the min/max value of a metric from all csv files in the root directory that match the parameters given.
 
         Args:
-            - params (list of str): Contains the parameters used, in form ["--parameter_name=parameter_value", ...].
+            - params (list of str): Parameter-value pairs we would like in the run, in form ["--parameter_name=parameter_value", ...].
+                If None or empty list, we will search through all csv files in the root directory.
             - metric_name (string): Name of the metric to be read.
             - select_by (string, optional): How to select the 'best' value for the metric from a log file, currently can select by 'min' or 'max'.
             - avg (bool, optional): Whether to average the metric over all runs, default is True.
@@ -229,8 +230,6 @@ class SaverCsv(BaseSaver):
 
         #  Get all paths that match the parameters given
         paths = get_all_paths(params, root_directory=self.root_dir)
-        if paths == []:
-            raise ValueError(f"No paths found matching {params}")
         # Read the metric from each path
         values = {}
         # Do averaging for different runs of same params if avg is True, otherwise just read the metric from each path
@@ -247,7 +246,9 @@ class SaverCsv(BaseSaver):
         else:
             for path in paths:
                 df = pd.read_csv(path)
-                values[os.path.join(*path.split(os.path.sep)[:-1])] = self.read_log(df, metric_name, select_by)
+                # values[os.path.join(*path.split(os.path.sep)[:-1])] = self.read_log(df, metric_name, select_by)
+                values[path] = self.read_log(df, metric_name, select_by)
+
         # Get the key of the min/max value
         if select_by == 'min':
             best_params = min(values, key=values.get)
@@ -262,6 +263,8 @@ class SaverCsv(BaseSaver):
         if best_params.startswith(os.path.sep):
             best_params = best_params[1:]
         best_params = best_params.split(os.path.sep)
+        if best_params[-1].startswith('results_'):
+            best_params = best_params[:-1]
         return best_params, best_value       
 
     def exists(self, params: List[str]) -> int:

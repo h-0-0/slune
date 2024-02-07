@@ -381,6 +381,29 @@ class TestSaverCsvReadMethod(unittest.TestCase):
         # Remove the results file
         os.remove(os.path.join(self.test_dir, 'dir2','subdir2','subdir3','more_results.csv'))
 
+    def test_read_avg_one_file(self):
+        # Arrange
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+        params = ['dir2', 'subdir2', 'subdir3']
+
+        # Act
+        params, value = saver.read(params, 'a', avg=True)
+
+        # Assert
+        self.assertEqual(value, 7)
+
+    def test_read_no_matching_files(self):
+        # Arrange
+        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+        params = ['dir3']
+
+        # Act
+        with self.assertRaises(ValueError):
+            saver.read(params, 'a', avg=True)
+        
+        with self.assertRaises(ValueError):
+            saver.read(params, 'a', avg=False)
+
 class TestSaverCsvReadMethod_WithParamValueFormat(unittest.TestCase):
     
         def setUp(self):
@@ -487,8 +510,25 @@ class TestSaverCsvReadMethod_WithParamValueFormat(unittest.TestCase):
 
             # Perform assertions based on your expectations
             self.assertEqual(param, ['--param1=string', '--param2=1', '--param3=3'])
-            self.assertEqual(value, 4)                
+            self.assertEqual(value, 4)         
 
+        def test_not_given_params(self):
+            # Create an instance of SaverCsv
+            saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
+
+            # Call the read method to get min values, averaged over each run
+            params, values = saver.read([], 'a', select_by='min', avg=True)
+
+            # Perform assertions based on your expectations
+            self.assertEqual(params, ['--param1=1', '--param2=True', '--param3=3'])
+            self.assertEqual(values, 1.5)
+
+            # Now not averaging and None instead of empty list
+            params, values = saver.read(None, 'a', select_by='min', avg=False)
+
+            # Perform assertions based on your expectations
+            self.assertEqual(params, ['--param1=1', '--param2=True', '--param3=3'])
+            self.assertEqual(values, 1)  
 
 if __name__ == "__main__":
     unittest.main()
