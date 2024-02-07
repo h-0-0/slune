@@ -145,20 +145,24 @@ def get_all_paths(dirs: List[str], root_directory: Optional[str]='.') -> List[st
     for csv in all_csv:
         path = csv.split(os.path.sep)
         contains = []
-        for p in dirs:
-            if '=' in p:
-                param, value = p.split('=')
-                for dir in path:
-                    if dir.startswith(param + '='):
-                        _, dir_value = dir.split('=')
-                        try:
-                            if float(value) == float(dir_value):
-                                contains.append(p)
-                        except ValueError:
-                            if value == dir_value:
-                                contains.append(p)
-            elif p in path:
-                contains.append(p)
-        if len(contains) == len(dirs):
+        if dirs in [None, []]:
             matches.append(csv)
+            continue
+        else:
+            for p in dirs:
+                if '=' in p:
+                    param, value = p.split('=')
+                    for dir in path:
+                        if dir.startswith(param + '='):
+                            _, dir_value = dir.split('=')
+                            try:
+                                if float(value) == float(dir_value):
+                                    contains.append(p)
+                            except ValueError:
+                                if value == dir_value:
+                                    contains.append(p)
+                elif p in path:
+                    contains.append(p)
+            if len(contains) == len(dirs):
+                matches.append(csv)
     return matches
