@@ -22,11 +22,11 @@ class SearcherGrid(BaseSearcher):
     """
 
     def __init__(self, configs: dict, runs: int = 0):
-        """ Initialises the searcher.
+        """ Initializes the searcher.
 
         Args:
             - configs (dict): Dictionary of parameters and values to try.
-                Structure of dictionary should be: { "--parameter_name" : [Value_1, Value_2, ...], ... }
+                Structure of dictionary should be: { "parameter_name" : [Value_1, Value_2, ...], ... }
             - runs (int, optional): Controls search based on number of runs we want for each config.
                 if runs > 0 -> run each config 'runs' times.
                 if runs = 0 -> run each config once even if it already exists.
@@ -160,6 +160,6 @@ class SearcherGrid(BaseSearcher):
         if self.grid_index == len(self.grid):
             raise IndexError('Reached end of grid, no more configurations to try.')
         # Return the next configuration to try
-        next_config = dict_to_strings(self.grid[self.grid_index])
+        next_config = self.grid[self.grid_index]
         return next_config
 

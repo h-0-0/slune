@@ -136,10 +136,42 @@ class TestNumericEquiv(unittest.TestCase):
 
 class TestDictToStrings(unittest.TestCase):
 
-    def test_dict_to_strings(self):
+    def test_common(self):
         d = {'arg1': 1, 'arg2': 2}
         result = dict_to_strings(d)
         self.assertEqual(result, ['--arg1=1', '--arg2=2'])
+
+    def test_value_none(self):
+        d = {'arg1': None, 'arg2': 2}
+        result = dict_to_strings(d)
+        self.assertEqual(result, ['--arg1', '--arg2=2'])
+    
+    def test_double_dash(self):
+        d = {'--arg1': 1, '--arg2': 2}
+        result = dict_to_strings(d)
+        self.assertEqual(result, ['--arg1=1', '--arg2=2'])
+    
+    def test_double_dash_value_none(self):
+        d = {'--arg1': None, '--arg2': 2}
+        result = dict_to_strings(d)
+        self.assertEqual(result, ['--arg1', '--arg2=2'])
+
+    def test_mixed(self):
+        d = {'arg1': 1, '--arg2': 2}
+        result = dict_to_strings(d)
+        self.assertEqual(result, ['--arg1=1', '--arg2=2'])
+
+    def test_key_has_equal(self):
+        d = {'arg1=': 1, '--arg2=': 2}
+        # Check if the function raises a ValueError
+        with self.assertRaises(ValueError):
+            dict_to_strings(d)
+        
+    def test_value_has_equal(self):
+        d = {'arg1': '1=', '--arg2': '2='}
+        # Check if the function raises a ValueError
+        with self.assertRaises(ValueError):
+            dict_to_strings(d)
     
 
 class TestFindCSVFiles(unittest.TestCase):
