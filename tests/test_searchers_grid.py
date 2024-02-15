@@ -77,10 +77,10 @@ class TestSearcherGrid(unittest.TestCase):
         searcher = SearcherGrid(hyperparameters)
         
         # Test the first few calls to next_tune
-        self.assertEqual(searcher.next_tune(), ["--param1=1", "--param2=a"])
-        self.assertEqual(searcher.next_tune(), ["--param1=1", "--param2=b"])
-        self.assertEqual(searcher.next_tune(), ["--param1=2", "--param2=a"])
-        self.assertEqual(searcher.next_tune(), ["--param1=2", "--param2=b"])
+        self.assertEqual(searcher.next_tune(), {'--param1':1, '--param2':'a'})
+        self.assertEqual(searcher.next_tune(), {'--param1':1, '--param2':'b'})
+        self.assertEqual(searcher.next_tune(), {'--param1':2, '--param2':'a'})
+        self.assertEqual(searcher.next_tune(), {'--param1':2, '--param2':'b'})
         
         # Test that it raises IndexError when all combinations are exhausted
         with self.assertRaises(IndexError):
@@ -110,11 +110,11 @@ class TestSearcherGrid(unittest.TestCase):
         searcher = SearcherGrid(hyperparameters, runs=2)
 
         # Test the first few calls to next_tune
-        self.assertEqual(searcher.next_tune(), ["--param1=1", "--param2=a"])
-        self.assertEqual(searcher.next_tune(), ["--param1=1", "--param2=a"])
-        self.assertEqual(searcher.next_tune(), ["--param1=1", "--param2=b"])
-        self.assertEqual(searcher.next_tune(), ["--param1=1", "--param2=b"])
-        self.assertEqual(searcher.next_tune(), ["--param1=2", "--param2=a"])
+        self.assertEqual(searcher.next_tune(), {'--param1':1, '--param2':'a'})
+        self.assertEqual(searcher.next_tune(), {'--param1':1, '--param2':'a'})
+        self.assertEqual(searcher.next_tune(), {'--param1':1, '--param2':'b'})
+        self.assertEqual(searcher.next_tune(), {'--param1':1, '--param2':'b'})
+        self.assertEqual(searcher.next_tune(), {'--param1':2, '--param2':'a'})
 
     def test_runs_zero(self):
         # Test that when we set the number of runs to zero, next_tune runs one of each run and then raises IndexError
@@ -127,10 +127,10 @@ class TestSearcherGrid(unittest.TestCase):
         searcher = SearcherGrid(hyperparameters, runs=0)
 
         # Test all calls to next_tune
-        self.assertEqual(searcher.next_tune(), ["--param1=1", "--param2=a"])
-        self.assertEqual(searcher.next_tune(), ["--param1=1", "--param2=b"])
-        self.assertEqual(searcher.next_tune(), ["--param1=2", "--param2=a"])
-        self.assertEqual(searcher.next_tune(), ["--param1=2", "--param2=b"])
+        self.assertEqual(searcher.next_tune(), {'--param1':1, '--param2':'a'})
+        self.assertEqual(searcher.next_tune(), {'--param1':1, '--param2':'b'})
+        self.assertEqual(searcher.next_tune(), {'--param1':2, '--param2':'a'})
+        self.assertEqual(searcher.next_tune(), {'--param1':2, '--param2':'b'})
         with self.assertRaises(IndexError):
             searcher.next_tune()
     
@@ -202,12 +202,12 @@ class TestSearcherGrid(unittest.TestCase):
         
         # Check that next_tune correctly skips existing runs
         searcher.check_existing_runs(MockSaver(MockLogger()))
-        self.assertEqual(searcher.next_tune(), ["--param1=1", "--param2=a"])
-        self.assertEqual(searcher.next_tune(), ["--param1=1", "--param2=b"])
-        self.assertEqual(searcher.next_tune(), ["--param1=2", "--param2=a"])
-        self.assertEqual(searcher.next_tune(), ["--param1=2", "--param2=a"])
-        self.assertEqual(searcher.next_tune(), ["--param1=2", "--param2=b"])
-        self.assertEqual(searcher.next_tune(), ["--param1=2", "--param2=b"])
+        self.assertEqual(searcher.next_tune(), {'--param1':1, '--param2':'a'})
+        self.assertEqual(searcher.next_tune(), {'--param1':1, '--param2':'b'})
+        self.assertEqual(searcher.next_tune(), {'--param1':2, '--param2':'a'})
+        self.assertEqual(searcher.next_tune(), {'--param1':2, '--param2':'a'})
+        self.assertEqual(searcher.next_tune(), {'--param1':2, '--param2':'b'})
+        self.assertEqual(searcher.next_tune(), {'--param1':2, '--param2':'b'})
         with self.assertRaises(IndexError):
             searcher.next_tune()
 
@@ -224,7 +224,7 @@ class TestSearcherGrid(unittest.TestCase):
         # Assert that when iterating through SearcherGrid correctly skips existing runs
         searcher.check_existing_runs(MockSaver(MockLogger()))
         for config in searcher:
-            self.assertTrue(config in [["--param1=1", "--param2=a"], ["--param1=1", "--param2=b"], ["--param1=2", "--param2=a"], ["--param1=2", "--param2=b"]])
+            self.assertTrue(config in [{'--param1':1, '--param2':'a'}, {'--param1':1, '--param2':'b'}, {'--param1':2, '--param2':'a'}, {'--param1':2, '--param2':'b'}])
 
 
 if __name__ == '__main__':

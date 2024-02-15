@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, call, MagicMock
-from slune import garg, submit_job, sbatchit
+from slune import submit_job, sbatchit
 import os
 
 class TestSubmitJob(unittest.TestCase):
@@ -8,13 +8,13 @@ class TestSubmitJob(unittest.TestCase):
     def test_regular(self, mock_run):
         # Arrange
         sh_path = os.path.join('path','to','bash','script')
-        args = ["arg1", "arg2"]
+        args = {"arg1": 1, "arg2": "two", "arg3": False}
 
         # Act
-        submit_job(sh_path, args)
+        submit_job(sh_path, args=args)
 
         # Assert
-        mock_run.assert_called_once_with(['sbatch', sh_path, 'arg1', 'arg2'], check=True)
+        mock_run.assert_called_once_with(['sbatch', sh_path, '--arg1=1', '--arg2=two', '--arg3=False'], check=True)
 
 class TestSbatchit(unittest.TestCase):
     @patch('subprocess.run')
@@ -23,44 +23,18 @@ class TestSbatchit(unittest.TestCase):
         script_path = os.path.join('path','to','script')
         template_path = os.path.join('path','to','template')
         searcher = MagicMock()
-        searcher.__iter__.return_value = [['arg1', 'arg2'], ['arg3', 'arg4']]
-        cargs = ["carg1", "carg2"]
+        searcher.__iter__.return_value = [{'arg1':1, 'arg2':'two'}, {'arg3':False, 'arg4':0.5}]
+        cargs = {"carg1":"str", "carg2":"str"}
         saver = None
 
         # Act
         sbatchit(script_path, template_path, searcher, cargs, saver)
 
         # Assert
-        calls = [call(['sbatch', template_path, script_path, 'carg1', 'carg2', 'arg1', 'arg2'], check=True),
-                 call(['sbatch', template_path, script_path, 'carg1', 'carg2', 'arg3', 'arg4'], check=True)]
+        calls = [call(['sbatch', template_path, script_path, '--carg1=str', '--carg2=str', '--arg1=1', '--arg2=two'], check=True),
+                 call(['sbatch', template_path, script_path, '--carg1=str', '--carg2=str', '--arg3=False', '--arg4=0.5'], check=True)]
         mock_run.assert_has_calls(calls, any_order=True)
 
-class TestGarg(unittest.TestCase):
-
-    def test_single_argument_string(self):
-        args_ls = ['--name=John', '--age=25']
-        result = garg(args_ls, '--name')
-        self.assertEqual(result, 'John')
-
-    def test_single_argument_string_not_found(self):
-        args_ls = ['--age=25']
-        with self.assertRaises(ValueError):
-            garg(args_ls, '--name')
-
-    def test_multiple_arguments_list(self):
-        args_ls = ['--name=John', '--age=25', '--city=New York']
-        result = garg(args_ls, ['--name', '--age'])
-        self.assertEqual(result, ['John', '25'])
-
-    def test_multiple_arguments_list_some_not_found(self):
-        args_ls = ['--name=John', '--city=New York']
-        with self.assertRaises(ValueError):
-            garg(args_ls, ['--name', '--age'])
-
-    def test_invalid_argument_names(self):
-        args_ls = ['--name=John', '--age=25']
-        with self.assertRaises(TypeError):
-            garg(args_ls, 123)
 
 if __name__ == '__main__':
     unittest.main()

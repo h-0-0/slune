@@ -93,20 +93,34 @@ def get_numeric_equiv(og_path: str, root_directory: Optional[str]='.') -> str:
 def dict_to_strings(d: dict) -> List[str]:
     """ Converts a dictionary into a list of strings in the form of '--key=value'.
 
+    Converts a dictionary into a list of strings in the form of '--key=value' or '--key' if the value is None.
+
     Args:
         - d (dict): Dictionary to be converted.
 
     Returns:
-        - out (list of str): List of strings in the form of '--key=value'.
+        - out (list of str): List of strings in the form of '--key=value'/'--key'.
 
     """
 
     out = []
+    if d in [{}, None]:
+        return out
     for key, value in d.items():
-        if key.startswith('--'):
-            out.append('{}={}'.format(key, value))
+        if '=' in key:
+            raise ValueError("Keys cannot contain '='")
+        elif '=' in str(value):
+            raise ValueError("Values cannot contain '='")
+        elif key.startswith('--'):
+            if value == None:
+                out.append(key)
+            else:
+                out.append('{}={}'.format(key, value))
         else:
-            out.append('--{}={}'.format(key, value))
+            if value == None:
+                out.append('--{}'.format(key))
+            else:
+                out.append('--{}={}'.format(key, value))
     return out
 
 def find_csv_files(root_directory: Optional[str]='.') -> List[str]:
