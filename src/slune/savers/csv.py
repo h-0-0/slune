@@ -155,7 +155,7 @@ class SaverCsv(BaseSaver):
         # Check if root directory exists, if not create it
         if not os.path.exists(self.root_dir):
             time.sleep(random.random()) # Wait a random amount of time under 1 second to avoid multiple processes creating the same directory
-            os.makedirs(self.root_dir)
+            os.makedirs(self.root_dir, exist_ok=True)
         # Get path of directory where we should store our csv of results
         dir_path = self.get_match(params)
         # Check if directory exists, if not create it
@@ -198,7 +198,7 @@ class SaverCsv(BaseSaver):
         dir_path = os.path.join(*dir_path)
         if not os.path.exists(dir_path):
             time.sleep(random.random()) # Wait a random amount of time under 1 second to avoid multiple processes creating the same directory
-            os.makedirs(dir_path)
+            os.makedirs(dir_path, exist_ok=True)
         # If csv file already exists, append results to the end
         if os.path.exists(self.current_path):
             results = pd.concat([pd.read_csv(self.current_path), results])
