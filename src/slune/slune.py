@@ -18,7 +18,7 @@ def submit_job(sh_path: str, script_path:str = None , args: dict = {}):
     
     """
     
-    args = dict_to_strings(args)
+    args = dict_to_strings(args, ready_for_cl=True)
     try:
         # Run the Bash script using subprocess
         if script_path == None:

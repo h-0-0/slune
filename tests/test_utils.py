@@ -1,6 +1,6 @@
 import unittest
 import os
-from slune.utils import find_directory_path, dict_to_strings, find_ext_files, get_all_paths, get_numeric_equiv
+from slune.utils import find_directory_path, dict_to_strings, strings_to_dict, find_ext_files, get_all_paths, get_numeric_equiv
 
 class TestFindDirectoryPath(unittest.TestCase):
 
@@ -139,12 +139,12 @@ class TestDictToStrings(unittest.TestCase):
     def test_common(self):
         d = {'arg1': 1, 'arg2': 2}
         result = dict_to_strings(d)
-        self.assertEqual(result, ['--arg1=1', '--arg2=2'])
+        self.assertEqual(result, ['arg1=1', 'arg2=2'])
 
     def test_value_none(self):
         d = {'arg1': None, 'arg2': 2}
         result = dict_to_strings(d)
-        self.assertEqual(result, ['--arg1', '--arg2=2'])
+        self.assertEqual(result, ['arg1', 'arg2=2'])
     
     def test_double_dash(self):
         d = {'--arg1': 1, '--arg2': 2}
@@ -159,20 +159,52 @@ class TestDictToStrings(unittest.TestCase):
     def test_mixed(self):
         d = {'arg1': 1, '--arg2': 2}
         result = dict_to_strings(d)
-        self.assertEqual(result, ['--arg1=1', '--arg2=2'])
+        self.assertEqual(result, ['arg1=1', '--arg2=2'])
 
     def test_key_has_equal(self):
-        d = {'arg1=': 1, '--arg2=': 2}
+        d = {'arg1=': 1, 'arg2=': 2}
         # Check if the function raises a ValueError
         with self.assertRaises(ValueError):
             dict_to_strings(d)
         
     def test_value_has_equal(self):
-        d = {'arg1': '1=', '--arg2': '2='}
+        d = {'arg1': '1=', 'arg2': '2='}
         # Check if the function raises a ValueError
         with self.assertRaises(ValueError):
             dict_to_strings(d)
-    
+
+class TestStringsToDict(unittest.TestCase):
+
+    def test_common(self):
+        s = ['arg1=1', 'arg2=2']
+        result = strings_to_dict(s)
+        self.assertEqual(result, {'arg1': 1, 'arg2': 2})
+
+    def test_double_dash(self):
+        s = ['-arg1=1', '-arg2=2']
+        result = strings_to_dict(s)
+        self.assertEqual(result, {'arg1': 1, 'arg2': 2})
+
+    def test_double_dash(self):
+        s = ['--arg1=1', '--arg2=2']
+        result = strings_to_dict(s)
+        self.assertEqual(result, {'arg1': 1, 'arg2': 2})
+
+    def test_mixed(self):
+        s = ['arg1=1', '--arg2=2']
+        result = strings_to_dict(s)
+        self.assertEqual(result, {'arg1': 1, 'arg2': 2})
+
+    def test_key_has_double_equals(self):
+        s = ['arg1==1', 'arg2=2']
+        # Check if the function raises a ValueError
+        with self.assertRaises(ValueError):
+            strings_to_dict(s)
+
+    def test_value_has_equals(self):
+        s = ['arg1=1=', 'arg2=2']
+        with self.assertRaises(ValueError):
+            strings_to_dict(s)
 
 class TestFindCSVFiles(unittest.TestCase):
 
