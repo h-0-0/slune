@@ -62,8 +62,7 @@ class SaverExt(BaseSaver):
         Args:
             - logger_instance (BaseLogger): Instance of a logger class that inherits from BaseLogger.
             - ext (str): Extension of the file where we will store the results, default is '.csv'.
-            - params (dict): (key,value) pairs we would like to use for our methods, default is None.
-                If None, we will create a path using the parameters given in the log.
+            - params (dict): (key,value) pairs we would like to generate a path for, default is None.
             - root_dir (str, optional): Path to the root directory where we will store the '.ext files, default is './slune_results'.
         
         """
@@ -231,3 +230,11 @@ class SaverExt(BaseSaver):
                 raise Exception('SaverExt.current_path is None, please provide parameters to create a path.')
         return self.current_path
 
+    def get_current_params(self) -> dict:
+        """ Getter function for the current_params attribute. 
+        
+        Returns:
+            - current_params (dict): (key,value) pairs we would like to use for our methods.
+        
+        """
+        return self.current_params
