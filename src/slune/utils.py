@@ -90,16 +90,17 @@ def get_numeric_equiv(og_path: str, root_directory: Optional[str]='.') -> str:
                 equiv = next_dir
     return equiv
 
-def dict_to_strings(d: dict) -> List[str]:
-    """ Converts a dictionary into a list of strings in the form of '--key=value'.
+def dict_to_strings(d: dict, ready_for_cl: bool=False) -> List[str]:
+    """ Converts a dictionary into a list of strings in the form of 'key=value'.
 
-    Converts a dictionary into a list of strings in the form of '--key=value' or '--key' if the value is None.
+    Converts a dictionary into a list of strings in the form of 'key=value' or 'key' if the value is None.
 
     Args:
         - d (dict): Dictionary to be converted.
+        - ready_for_cl (bool, optional): If True adds '--' to the beginning of each key to make ready for running scripts from command-line, default is False.
 
     Returns:
-        - out (list of str): List of strings in the form of '--key=value'/'--key'.
+        - out (list of str): List of strings in the form of 'key=value'/'key'.
 
     """
 
@@ -111,17 +112,52 @@ def dict_to_strings(d: dict) -> List[str]:
             raise ValueError("Keys cannot contain '='")
         elif '=' in str(value):
             raise ValueError("Values cannot contain '='")
-        elif key.startswith('--'):
-            if value == None:
-                out.append(key)
-            else:
-                out.append('{}={}'.format(key, value))
-        else:
+        elif ready_for_cl:
             if value == None:
                 out.append('--{}'.format(key))
             else:
                 out.append('--{}={}'.format(key, value))
+        else:
+            if value == None:
+                out.append('{}'.format(key))
+            else:
+                out.append('{}={}'.format(key, value))
     return out
+
+def strings_to_dict(ls:List[str])->dict:
+    """ Converts a list of strings in the form of 'key=value' into a dictionary.
+
+    If the key starts with '--' or '-', it is stripped of these characters. Helpful when converting command line arguments into a dictionary.
+
+    Args:
+        - ls (list of str): List of strings in the form of 'key=value'.
+
+    Returns:
+        - d (dict): Dictionary containing the key-value pairs.
+
+    """
+    d = {}
+    for item in ls:
+        if item.count('=') != 1:
+            raise ValueError("Each string in the list must contain exactly one '=' between the key and value.")
+        key, value = item.split('=')
+        if key[:2] == '--':
+            key = key[2:]
+        elif key[0] == '-':
+            key = key[1:]
+        # Attempt to convert value to int or float
+        if ('.' in value) or ('e' in value):
+            try:
+                value = float(value)
+            except ValueError:
+                pass
+        else:
+            try:
+                value = int(value)
+            except ValueError:
+                pass
+        d[key] = value
+    return d
 
 def find_ext_files(ext: str, root_directory: Optional[str]='.') -> List[str]:
     """ Recursively finds all files with 'ext' extension in all subdirectories of the root directory and returns their paths.

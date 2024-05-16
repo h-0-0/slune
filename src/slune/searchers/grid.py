@@ -10,7 +10,7 @@ class SearcherGrid(BaseSearcher):
 
     Attributes:
         - configs (dict): Parameters and values to create grid from.
-            Structure of dictionary should be: { "--parameter_name" : [Value_1, Value_2, ...], ... }
+            Structure of dictionary should be: { "parameter_name" : [Value_1, Value_2, ...], ... }
         - runs (int): Controls search based on number of runs we want for each config.
             if runs > 0 -> run each config 'runs' times.
             if runs = 0 -> run each config once even if it already exists.
