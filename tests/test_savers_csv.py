@@ -661,6 +661,17 @@ class TestSaverCsvGetSetCurrentPath(unittest.TestCase):
             actual_path = saver.getset_current_path(params)
             self.assertEqual(actual_path, expected_path)
 
+class TestSaverCsvGetCurrentParams(unittest.TestCase):
+    
+    def test_no_params(self):
+        saver = SaverCsv(LoggerDefault())
+        self.assertEqual(None, saver.get_current_params())
+
+    def test_with_params(self):
+        params = {'--param1': '1', '--param2': 'True', '--param3': '3'}
+        saver = SaverCsv(LoggerDefault(), params=params)
+        self.assertEqual(params, saver.get_current_params())
+
 
 if __name__ == "__main__":
     unittest.main()
