@@ -123,44 +123,46 @@ def dict_to_strings(d: dict) -> List[str]:
                 out.append('--{}={}'.format(key, value))
     return out
 
-def find_csv_files(root_directory: Optional[str]='.') -> List[str]:
-    """ Recursively finds all csv files in all subdirectories of the root directory and returns their paths.
+def find_ext_files(ext: str, root_directory: Optional[str]='.') -> List[str]:
+    """ Recursively finds all files with 'ext' extension in all subdirectories of the root directory and returns their paths.
 
     Args:
+        - ext (str): Extension of the files we want to find.
         - root_directory (str, optional): Path to the root directory to be searched, default is current working directory.
 
     Returns:
-        - csv_files (list of str): List of strings containing the paths to all csv files found.
+        - files (list of str): List of strings containing the paths to all files with ext as the extension found.
 
     """
-    csv_files = []
+    ext_files = []
     for root, dirs, files in os.walk(root_directory):
         for file in files:
-            if file.endswith('.csv'):
-                csv_files.append(os.path.join(root, file))
-    return csv_files
+            if file.endswith(ext):
+                ext_files.append(os.path.join(root, file))
+    return ext_files
 
-def get_all_paths(dirs: List[str], root_directory: Optional[str]='.') -> List[str]:
-    """ Find all possible paths of csv files that have directory matching one of each of all the parameters given.
+def get_all_paths(ext:str, dirs: List[str], root_directory: Optional[str]='.') -> List[str]:
+    """ Find all possible paths of files with 'ext' extension that have directory matching one of each of all the parameters given.
     
-    Finds all paths of csv files in all subdirectories of the root directory that have a directory in their path matching one of each of all the parameters given.
+    Finds all paths of files ending with 'ext' in all subdirectories of the root directory that have a directory in their path matching one of each of all the parameters given.
 
     Args:
+        - ext (str): Extension of the files we want to find.
         - dirs (list of str): List of directory names we want returned paths to have in their path. Checks equivalence of values if the directory name is in the form '--string=value'.
         - root_directory (str, optional): Path to the root directory to be searched, default is current working directory.
 
     Returns:
-        - matches (list of str): List of strings containing the paths to all csv files found.
+        - matches (list of str): List of strings containing the paths to all files ending with 'ext' found.
 
     """
 
-    all_csv = find_csv_files(root_directory)
+    all_files = find_ext_files(ext, root_directory)
     matches = []
-    for csv in all_csv:
-        path = csv.split(os.path.sep)
+    for file in all_files:
+        path = file.split(os.path.sep)
         contains = []
         if dirs in [None, []]:
-            matches.append(csv)
+            matches.append(file)
             continue
         else:
             for p in dirs:
@@ -178,5 +180,5 @@ def get_all_paths(dirs: List[str], root_directory: Optional[str]='.') -> List[st
                 elif p in path:
                     contains.append(p)
             if len(contains) == len(dirs):
-                matches.append(csv)
+                matches.append(file)
     return matches

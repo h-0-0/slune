@@ -1,6 +1,6 @@
 import unittest
 import os
-from slune.utils import find_directory_path, dict_to_strings, find_csv_files, get_all_paths, get_numeric_equiv
+from slune.utils import find_directory_path, dict_to_strings, find_ext_files, get_all_paths, get_numeric_equiv
 
 class TestFindDirectoryPath(unittest.TestCase):
 
@@ -205,11 +205,11 @@ class TestFindCSVFiles(unittest.TestCase):
                 os.rmdir(os.path.join(root, name))
         os.rmdir(self.test_dir)
 
-    def test_find_csv_files(self):
-        # Test the find_csv_files function
+    def test_find_ext_files(self):
+        # Test the find_ext_files function
 
         # Call the function to get the result
-        result = find_csv_files(self.test_dir)
+        result = find_ext_files('.csv',self.test_dir)
 
         # Define the expected result based on the files we created
         expected_result = [
@@ -257,7 +257,7 @@ class TestGetAllPaths(unittest.TestCase):
 
     def test_one_match(self):
         # Call the function to get the result
-        result = get_all_paths(['dir1', '--subdir=1'], self.test_dir)
+        result = get_all_paths('.csv', ['dir1', '--subdir=1'], self.test_dir)
 
         # Define the expected result based on the files we created
         expected_result = [
@@ -273,7 +273,7 @@ class TestGetAllPaths(unittest.TestCase):
     
     def test_multi_match(self):
         # Call the function to get the result
-        result = get_all_paths(['dir2', '--subdir=2'], self.test_dir)
+        result = get_all_paths('.csv', ['dir2', '--subdir=2'], self.test_dir)
 
         # Define the expected result based on the files we created
         expected_result = [
@@ -290,7 +290,7 @@ class TestGetAllPaths(unittest.TestCase):
     
     def test_depth(self):
         # Call the function to get the result
-        result = get_all_paths(['dir1'], self.test_dir)
+        result = get_all_paths('.csv', ['dir1'], self.test_dir)
 
         # Define the expected result based on the files we created
         expected_result = [
@@ -307,7 +307,7 @@ class TestGetAllPaths(unittest.TestCase):
 
     def test_no_match(self):
         # Call the function to get the result
-        result = get_all_paths(['dir3'], self.test_dir)
+        result = get_all_paths('.csv', ['dir3'], self.test_dir)
 
         # Define the expected result based on the files we created
         expected_result = []
@@ -321,7 +321,7 @@ class TestGetAllPaths(unittest.TestCase):
 
     def test_params_deep(self):
         # Call the function to get the result
-        result = get_all_paths(['--subdir=3'], self.test_dir)
+        result = get_all_paths('.csv', ['--subdir=3'], self.test_dir)
 
         # Define the expected result based on the files we created
         expected_result = [
@@ -337,7 +337,7 @@ class TestGetAllPaths(unittest.TestCase):
     
     def test_root_has_forwardslash(self):
         # Call the function to get the result
-        result = get_all_paths(['--subdir=1'], os.path.join(self.test_dir, 'dir1'))
+        result = get_all_paths('.csv', ['--subdir=1'], os.path.join(self.test_dir, 'dir1'))
 
         # Define the expected result based on the files we created
         expected_result = [
@@ -353,7 +353,7 @@ class TestGetAllPaths(unittest.TestCase):
 
     def test_numerically_equiv(self):
         # Call the function to get the result
-        result = get_all_paths(['--subdir=2.0'], self.test_dir)
+        result = get_all_paths('.csv', ['--subdir=2.0'], self.test_dir)
 
         # Define the expected result based on the files we created
         expected_result = [
@@ -370,7 +370,7 @@ class TestGetAllPaths(unittest.TestCase):
 
     def test_numerically_equiv_multi(self):
         # Call the function to get the result
-        result = get_all_paths(['--subdir=2.00', '--subdir=3e0'], self.test_dir)
+        result = get_all_paths('.csv', ['--subdir=2.00', '--subdir=3e0'], self.test_dir)
 
         # Define the expected result based on the files we created
         expected_result = [
