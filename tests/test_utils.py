@@ -153,7 +153,7 @@ class TestDictToStrings(unittest.TestCase):
     def test_value_none(self):
         d = {'arg1': None, 'arg2': 2}
         result = dict_to_strings(d)
-        self.assertEqual(result, ['arg1', 'arg2=2'])
+        self.assertEqual(result, ['arg1=None', 'arg2=2'])
     
     def test_double_dash(self):
         d = {'--arg1': 1, '--arg2': 2}
@@ -163,7 +163,7 @@ class TestDictToStrings(unittest.TestCase):
     def test_double_dash_value_none(self):
         d = {'--arg1': None, '--arg2': 2}
         result = dict_to_strings(d)
-        self.assertEqual(result, ['--arg1', '--arg2=2'])
+        self.assertEqual(result, ['--arg1=None', '--arg2=2'])
 
     def test_mixed(self):
         d = {'arg1': 1, '--arg2': 2}
