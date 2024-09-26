@@ -98,7 +98,7 @@ def get_numeric_equiv(og_path: str, root_directory: Optional[str]='.') -> str:
 def dict_to_strings(d: dict, ready_for_cl: bool=False) -> List[str]:
     """ Converts a dictionary into a list of strings in the form of 'key=value'.
 
-    Converts a dictionary into a list of strings in the form of 'key=value' or 'key' if the value is None.
+    Converts a dictionary into a list of strings in the form of 'key=value'.
 
     Args:
         - d (dict): Dictionary to be converted.
@@ -118,15 +118,9 @@ def dict_to_strings(d: dict, ready_for_cl: bool=False) -> List[str]:
         elif '=' in str(value):
             raise ValueError("Values cannot contain '='")
         elif ready_for_cl:
-            if value == None:
-                out.append('--{}'.format(key))
-            else:
-                out.append('--{}={}'.format(key, value))
+            out.append('--{}={}'.format(key, value))
         else:
-            if value == None:
-                out.append('{}'.format(key))
-            else:
-                out.append('{}={}'.format(key, value))
+            out.append('{}={}'.format(key, value))
     return out
 
 def strings_to_dict(ls:List[str])->dict:

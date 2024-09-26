@@ -279,11 +279,11 @@ class TestSaverCsvExists(unittest.TestCase):
 
         # Creating some CSV files with specific subdirectory paths
         self.csv_files = [
-            os.path.join('dir1','file1.csv'),
-            os.path.join('dir2','file2.csv'),
-            os.path.join('dir1','subdir1','file3.csv'),
-            os.path.join('dir2','subdir2','file4.csv'),
-            os.path.join('dir2','subdir2','subdir3','file5.csv')
+            os.path.join('dir1=None','file1.csv'),
+            os.path.join('dir2=None','file2.csv'),
+            os.path.join('dir1=None','subdir1=None','file3.csv'),
+            os.path.join('dir2=None','subdir2=None','file4.csv'),
+            os.path.join('dir2=None','subdir2=None','subdir3=None','file5.csv')
         ]
 
         for i, file in enumerate(self.csv_files):
