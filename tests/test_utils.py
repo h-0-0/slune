@@ -133,6 +133,15 @@ class TestNumericEquiv(unittest.TestCase):
         expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3=3')
         self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
 
+    def test_get_numeric_directory_with_no_equals(self):
+        os.makedirs(os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir_no_equals'))
+
+        path = os.path.join('--dir1=1.0','--dir2=2', '--dir_no_equals')
+        expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir_no_equals')
+        self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)   
+
+        os.rmdir(os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir_no_equals'))
+
 
 class TestDictToStrings(unittest.TestCase):
 
