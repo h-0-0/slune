@@ -71,7 +71,9 @@ def get_numeric_equiv(og_path: str, root_directory: Optional[str]='.') -> str:
                 equiv = next_dir
                 continue
             # If the directory doesn't exist, check if there's a directory with the same numerical value
-            dir_value = d.split('=')[1]
+            check, dir_value = d.split('=')
+            if (check == '') or (dir_value == ''):
+                raise ValueError("'=' cannot be at the beginning or end of a directory name.")
             if is_numeric(dir_value):
                 dir_value = float(dir_value)
                 if os.path.exists(equiv):
@@ -79,7 +81,9 @@ def get_numeric_equiv(og_path: str, root_directory: Optional[str]='.') -> str:
                     for existing_dir in existing_dirs:
                         if not '=' in existing_dir: # We only consider directories with the form '--string=value'
                             continue
-                        existing_dir_value = existing_dir.split('=')[1]
+                        check, existing_dir_value = existing_dir.split('=')
+                        if check == '' or existing_dir_value == '':
+                            raise ValueError("'=' cannot be at the beginning of a directory name.")
                         if is_numeric(existing_dir_value) and float(existing_dir_value) == dir_value:
                             equiv = os.path.join(equiv, existing_dir)
                             break

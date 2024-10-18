@@ -86,36 +86,38 @@ class TestNumericEquiv(unittest.TestCase):
     
     def tearDown(self):
         os.rmdir(os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3=3'))
+        if os.path.exists(os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3_3.0')):
+            os.rmdir(os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3_3.0'))
         os.rmdir(os.path.join(self.test_dir, '--dir1=1', '--dir2=2'))
         os.rmdir(os.path.join(self.test_dir, '--dir1=1'))
         os.rmdir(self.test_dir)
 
-    def test_get_numeric_equiv_full_path_exist(self):
+    def test_equiv_full_path_exist(self):
         path = os.path.join('--dir1=1','--dir2=2')
         expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2')
         self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
 
-    def test_get_numeric_equiv_path_longer_than_existing(self):
+    def test_path_longer_than_existing(self):
         path = os.path.join('--dir1=1','--dir2=2','--dir4=4')
         expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir4=4')
         self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
 
-    def test_get_numeric_equiv_full_path_exist_diff_numeric_value(self):
+    def test_full_path_exist_diff_numeric_value(self):
         path = os.path.join('--dir1=1','--dir2=2.00')
         expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2')
         self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
 
-    def test_get_numeric_equiv_none_of_path_exist(self):
+    def test_none_of_path_exist(self):
         path = os.path.join('--dir5=5','--dir6=6')
         expected =  os.path.join(self.test_dir, '--dir5=5', '--dir6=6')
         self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
 
-    def test_get_numeric_equiv_numeric_equiv_exist_then_none(self):
+    def test_numeric_equiv_exist_then_none(self):
         path = os.path.join('--dir1=1.0','--dir4=4')
         expected = os.path.join(self.test_dir, '--dir1=1', '--dir4=4')
         self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
     
-    def test_get_numeric_equiv_exists_then_numeric_equiv(self):
+    def test_exists_then_numeric_equiv(self):
         path = os.path.join('--dir1=1','--dir2=2.0')
         expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2')
         self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
@@ -124,7 +126,7 @@ class TestNumericEquiv(unittest.TestCase):
         expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3=3')
         self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
     
-    def test_get_numerc_equiv_numeric_equiv_then_exists(self):
+    def test_numeric_equiv_then_exists(self):
         path = os.path.join('--dir1=1.0','--dir2=2')
         expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2')
         self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
@@ -133,7 +135,7 @@ class TestNumericEquiv(unittest.TestCase):
         expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3=3')
         self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
 
-    def test_get_numeric_directory_with_no_equals(self):
+    def test_directory_with_no_equals(self):
         os.makedirs(os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir_no_equals'))
 
         path = os.path.join('--dir1=1.0','--dir2=2', '--dir_no_equals')
@@ -141,6 +143,31 @@ class TestNumericEquiv(unittest.TestCase):
         self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)   
 
         os.rmdir(os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir_no_equals'))
+
+    def test_number_no_equals(self):
+        os.makedirs(os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3_3.0'))
+        path = os.path.join('--dir1=1','--dir2=2','--dir3_3.0')
+        expected = os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3_3.0')
+        self.assertEqual(get_numeric_equiv(path, self.test_dir), expected)
+        os.rmdir(os.path.join(self.test_dir, '--dir1=1', '--dir2=2', '--dir3_3.0'))
+
+    def test_equals_at_begining(self):
+        path = os.path.join('--dir1=1','--dir2=2','=--dir3_3.0')
+        # Expect an error to be raised
+        with self.assertRaises(ValueError):
+            get_numeric_equiv(path, self.test_dir)
+        
+    def test_equals_at_end(self):
+        path = os.path.join('--dir1=1','--dir2=2','--dir3_3.0=')
+        # Expect an error to be raised
+        with self.assertRaises(ValueError):
+            get_numeric_equiv(path, self.test_dir)
+    
+    def test_two_equals(self):
+        path = os.path.join('--dir1=1','--dir2=2','--dir3=3=3')
+        # Expect an error to be raised
+        with self.assertRaises(ValueError):
+            get_numeric_equiv(path, self.test_dir)
 
 
 class TestDictToStrings(unittest.TestCase):
