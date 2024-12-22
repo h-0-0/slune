@@ -4,6 +4,7 @@ from slune.loggers.default import LoggerDefault
 from datetime import datetime
 import time
 import pandas as pd
+import numpy as np
 
 class TestLoggerDefaultWrite(unittest.TestCase):
     def setUp(self):
@@ -74,6 +75,58 @@ class TestLoggerDefaultRead(unittest.TestCase):
         # Test reading the maximum value of Metric2
         result = self.logger.read_log(df, 'Metric2', select_by='max')
         self.assertEqual(result, 8)
+
+    def test_read_all_metric(self):
+        # Create a sample DataFrame
+        data = {'Metric1': [1, 2, 3, 4],
+                'Metric2': [5, 6, 7, 8]}
+        df = pd.DataFrame(data)
+
+        # Test reading all values of Metric1
+        result = self.logger.read_log(df, 'Metric1', select_by='all')
+        self.assertIsInstance(result, np.ndarray) # check if result is np array
+        eq = np.array_equal(result, np.array([1, 2, 3, 4]))
+        self.assertEqual(True, eq)
+    
+    def test_read_last_metric(self):
+        # Create a sample DataFrame
+        data = {'Metric1': [1, 2, 3, 4],
+                'Metric2': [5, 6, 7, 8]}
+        df = pd.DataFrame(data)
+
+        # Test reading the last value of Metric1
+        result = self.logger.read_log(df, 'Metric1', select_by='last')
+        self.assertEqual(result, 4)
+
+    def test_read_first_metric(self):
+        # Create a sample DataFrame
+        data = {'Metric1': [1, 2, 3, 4],
+                'Metric2': [5, 6, 7, 8]}
+        df = pd.DataFrame(data)
+
+        # Test reading the first value of Metric2
+        result = self.logger.read_log(df, 'Metric2', select_by='first')
+        self.assertEqual(result, 5)
+
+    def test_read_mean_metric(self):
+        # Create a sample DataFrame
+        data = {'Metric1': [1, 2, 3, 4],
+                'Metric2': [5, 6, 7, 8]}
+        df = pd.DataFrame(data)
+
+        # Test reading the mean value of Metric2
+        result = self.logger.read_log(df, 'Metric2', select_by='mean')
+        self.assertEqual(result, 6.5)
+
+    def test_read_median_metric(self):
+        # Create a sample DataFrame
+        data = {'Metric1': [1, 2, 3, 4],
+                'Metric2': [5, 6, 7, 8]}
+        df = pd.DataFrame(data)
+
+        # Test reading the median value of Metric1
+        result = self.logger.read_log(df, 'Metric1', select_by='median')
+        self.assertEqual(result, 2.5)
 
     def test_invalid_metric_name(self):
         # Create a sample DataFrame
