@@ -81,7 +81,7 @@ class SaverCsv(SaverExt):
 
         self.save_collated_from_results(self.logger.results)
         
-    def read(self, params: dict, metric_name: str, select_by: str ='max', avg: bool =True) -> Tuple[dict, float]:
+    def read(self, params: dict, metric_name: str, select_by: str ='max', collate_by: str ='mean') -> Tuple[dict, float]:
         """ Finds the min/max value of a metric from all csv files in the root directory that match the parameters given.
 
         Args:
@@ -89,7 +89,7 @@ class SaverCsv(SaverExt):
                 If None or empty dict, we will search through all csv files in the root directory.
             - metric_name (string): Name of the metric to be read.
             - select_by (string, optional): How to select the 'best' value for the metric from a log file, currently can select by 'min' or 'max'.
-            - avg (bool, optional): Whether to average the metric over all runs, default is True.
+            - collate_by (bool, optional): What to do with the metrics selected over all runs (with same parameters), default is 'mean'.
 
         Returns:
             - best_params (dict): Contains the arguments used to get the 'best' value of the metric (determined by select_by).
@@ -99,10 +99,13 @@ class SaverCsv(SaverExt):
 
         #  Get all paths that match the parameters given
         paths = get_all_paths('.csv', dict_to_strings(params), root_directory=self.root_dir)
+        # If no paths found, return None
+        if paths == []:
+            return None, None
         # Read the metric from each path
         values = {}
         # Do averaging for different runs of same params if avg is True, otherwise just read the metric from each path
-        if avg:
+        if collate_by == 'mean':
             paths_same_params = set([os.path.join(*p.split(os.path.sep)[:-1]) for p in paths])
             for path in paths_same_params:
                 runs = get_all_paths('.csv', path.split(os.path.sep), root_directory=self.root_dir)
@@ -112,26 +115,27 @@ class SaverCsv(SaverExt):
                     cumsum += self.read_log(df, metric_name, select_by)
                 avg_of_runs = cumsum / len(runs)
                 values[path] = avg_of_runs
-        else:
+        elif collate_by == 'all':
             for path in paths:
                 df = pd.read_csv(path)
                 # values[os.path.join(*path.split(os.path.sep)[:-1])] = self.read_log(df, metric_name, select_by)
                 values[path] = self.read_log(df, metric_name, select_by)
-
-        # Get the key of the min/max value
-        if select_by == 'min':
-            best_params = min(values, key=values.get)
-        elif select_by == 'max':
-            best_params = max(values, key=values.get)
         else:
-            raise ValueError(f"select_by must be 'min' or 'max', got {select_by}")
-        # Find the best value of the metric from the key
-        best_value = values[best_params]
-        # Format the path into a list of arguments
-        best_params = best_params.replace(self.root_dir, '')
-        if best_params.startswith(os.path.sep):
-            best_params = best_params[1:]
-        best_params = best_params.split(os.path.sep)
-        if best_params[-1].startswith('results_'):
-            best_params = best_params[:-1]
-        return best_params, best_value       
+            raise ValueError(f"collate_by must be 'mean' or 'all', got {collate_by}")
+        
+        # Format the path into a list of arguments 
+        out_params, out_values = [], []
+        for key in values.keys():
+            value = values[key]
+            key = key.replace(self.root_dir, '')
+            if key.startswith(os.path.sep):
+                key = key[1:]
+            key = key.split(os.path.sep)
+            if key[-1].startswith('results_'):
+                # key = key[:-1]
+                # if has .csv, remove it
+                if key[-1].endswith('.csv'):
+                    key[-1] = key[-1][:-4]
+            out_params.append(key)
+            out_values.append(value)
+        return out_params, out_values
