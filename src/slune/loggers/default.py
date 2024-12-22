@@ -55,15 +55,10 @@ class LoggerDefault(BaseLogger):
         Args:
             - data_frame (pd.DataFrame): Data frame containing the metric to be read.
             - metric_name (str): Name of the metric to be read.
-            - select_by (str, optional): How to select the 'best' metric, currently can select by 'min' or 'max'.
+            - select_by (str, optional): How to select the 'best' metric, currently use ['min', 'max', 'all', 'last', 'first', 'mean', 'median'].
 
         Returns:
-            - value (float): Minimum or maximum value of the metric.
-
-        TODO: 
-            - Add more options for select_by.
-            - Should be able to return other types than float?
-
+            - value (float): Value of the metric as selected by select_by.
         """ 
 
         # Get the metric column
@@ -73,8 +68,18 @@ class LoggerDefault(BaseLogger):
             index = metric_col.idxmax()
         elif select_by == 'min':
             index = metric_col.idxmin()
+        elif select_by == 'all':
+            return metric_col.values
+        elif select_by == 'last':
+            index = metric_col.index[-1]
+        elif select_by == 'first':
+            index = metric_col.index[0]
+        elif select_by == 'mean':
+            return metric_col.mean()
+        elif select_by == 'median':
+            return metric_col.median()
         else:
-            raise ValueError(f"select_by must be 'min' or 'max', got {select_by}")
+            raise ValueError(f"select_by must be one of ['min', 'max', 'all', 'last', 'first', 'mean', 'median'], got {select_by}")
         # Get the value of the metric
         value = metric_col.iloc[index]
         return value
