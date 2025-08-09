@@ -122,7 +122,7 @@ class SearcherGrid(BaseSearcher):
         """
         if self.saver_exists != None:
             # Check if there are existing runs, if so skip them
-            existing_runs = self.saver_exists(dict_to_strings(self.grid[grid_index]))
+            existing_runs = self.saver_exists(self.grid[grid_index])
             if self.runs - existing_runs > 0:
                 run_index = existing_runs
                 return grid_index, run_index

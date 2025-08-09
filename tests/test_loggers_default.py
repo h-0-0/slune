@@ -149,5 +149,11 @@ class TestLoggerDefaultRead(unittest.TestCase):
             self.logger.read_log(df, 'Metric1', select_by='invalid_value')
 
 
+class TestLoggerDefaultWarnings(unittest.TestCase):
+    def test_warning_on_args_ignored(self):
+        with self.assertRaises(Warning):
+            LoggerDefault(1, x=2)
+
+
 if __name__ == '__main__':
     unittest.main()

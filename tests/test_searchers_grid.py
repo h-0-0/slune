@@ -34,10 +34,8 @@ class MockSaver(BaseSaver):
         return 1
 
     def exists(self, params):
-        if "--param1=1" in params:
-            return 1
-        else:
-            return 0
+        # Accept dicts from SearcherGrid.exists calls
+        return 1 if isinstance(params, dict) and params.get("--param1") == 1 else 0
 
 class TestSearcherGrid(unittest.TestCase):
 
