@@ -199,7 +199,15 @@ class SaverExt(BaseSaver):
         """
 
         #  Get all paths that match the parameters given
-        params = dict_to_strings(params)
+        # Support both dict (preferred) and preformatted list[str] inputs
+        if isinstance(params, dict) or params in [None, {}]:
+            params = dict_to_strings(params or {})
+        elif isinstance(params, list):
+            # Assume already in "--key=value" form
+            pass
+        else:
+            # Fallback: try to stringify, but keep behavior predictable
+            raise TypeError("params must be a dict, list, or None")
         paths = get_all_paths(self.ext, params, root_directory=self.root_dir)
         return len(paths)
 
