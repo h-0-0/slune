@@ -479,6 +479,16 @@ class TestGetAllPaths(unittest.TestCase):
         # Assert that the result matches the expected result
         self.assertEqual(result, expected_result)
 
+    def test_duplicate_parameter_names(self):
+        # Duplicates should still allow matching if both are satisfied by path
+        result = get_all_paths('.csv', ['dir2', '--subdir=2', '--subdir=2'], self.test_dir)
+        expected_result = [
+            os.path.join(self.test_dir, 'dir2','--subdir=2','file4.csv'),
+            os.path.join(self.test_dir, 'dir2','--subdir=2','--subdir=3','file5.csv')
+        ]
+        result.sort(); expected_result.sort()
+        self.assertEqual(result, expected_result)
+
 
 if __name__ == '__main__':
     unittest.main()
