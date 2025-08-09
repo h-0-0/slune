@@ -77,6 +77,9 @@ class SearcherGrid(BaseSearcher):
 
             param_name = param_names[0]
             param_values = param_dict[param_name]
+            # Validate param_values
+            if isinstance(param_values, (str, bytes)) or not hasattr(param_values, '__iter__'):
+                raise TypeError(f"Values for parameter '{param_name}' must be an iterable of values, got {type(param_values).__name__}")
 
             for value in param_values:
                 current_combination[param_name] = value
@@ -122,7 +125,7 @@ class SearcherGrid(BaseSearcher):
         """
         if self.saver_exists != None:
             # Check if there are existing runs, if so skip them
-            existing_runs = self.saver_exists(dict_to_strings(self.grid[grid_index]))
+            existing_runs = self.saver_exists(self.grid[grid_index])
             if self.runs - existing_runs > 0:
                 run_index = existing_runs
                 return grid_index, run_index

@@ -149,5 +149,22 @@ class TestLoggerDefaultRead(unittest.TestCase):
             self.logger.read_log(df, 'Metric1', select_by='invalid_value')
 
 
+class TestLoggerDefaultWarnings(unittest.TestCase):
+    def test_warning_on_args_ignored(self):
+        with self.assertRaises(Warning):
+            LoggerDefault(1, x=2)
+
+    def test_log_with_non_dict_raises(self):
+        logger = LoggerDefault()
+        with self.assertRaises((TypeError, AttributeError)):
+            logger.log([("a", 1)])  # not a dict
+
+    def test_log_with_empty_dict_adds_timestamp_only(self):
+        logger = LoggerDefault()
+        logger.log({})
+        self.assertEqual(len(logger.results), 1)
+        self.assertIn('time_stamp', logger.results.columns)
+
+
 if __name__ == '__main__':
     unittest.main()

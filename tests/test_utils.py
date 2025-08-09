@@ -209,6 +209,14 @@ class TestDictToStrings(unittest.TestCase):
         with self.assertRaises(ValueError):
             dict_to_strings(d)
 
+    def test_empty_dict(self):
+        self.assertEqual(dict_to_strings({}), [])
+
+    def test_ready_for_cl_true(self):
+        d = {"alpha": 0.1, "beta": True, "gamma": 3}
+        out = dict_to_strings(d, ready_for_cl=True)
+        self.assertEqual(sorted(out), sorted(["--alpha=0.1", "--beta=True", "--gamma=3"]))
+
 class TestStringsToDict(unittest.TestCase):
 
     def test_common(self):
@@ -241,6 +249,25 @@ class TestStringsToDict(unittest.TestCase):
         s = ['arg1=1=', 'arg2=2']
         with self.assertRaises(ValueError):
             strings_to_dict(s)
+
+    def test_empty_list(self):
+        self.assertEqual(strings_to_dict([]), {})
+
+    def test_scientific_and_negative_numbers(self):
+        s = ["lr=1e-3", "momentum=-0.9", "epochs=10"]
+        out = strings_to_dict(s)
+        self.assertEqual(out["lr"], 1e-3)
+        self.assertEqual(out["momentum"], -0.9)
+        self.assertEqual(out["epochs"], 10)
+
+    def test_value_with_trailing_dot(self):
+        s = ["x=3."]
+        out = strings_to_dict(s)
+        self.assertEqual(out["x"], 3.0)
+
+    def test_no_equals_raises(self):
+        with self.assertRaises(ValueError):
+            strings_to_dict(["arg1-1"])  # missing '='
 
 class TestFindCSVFiles(unittest.TestCase):
 
@@ -450,6 +477,16 @@ class TestGetAllPaths(unittest.TestCase):
         expected_result.sort()
 
         # Assert that the result matches the expected result
+        self.assertEqual(result, expected_result)
+
+    def test_duplicate_parameter_names(self):
+        # Duplicates should still allow matching if both are satisfied by path
+        result = get_all_paths('.csv', ['dir2', '--subdir=2', '--subdir=2'], self.test_dir)
+        expected_result = [
+            os.path.join(self.test_dir, 'dir2','--subdir=2','file4.csv'),
+            os.path.join(self.test_dir, 'dir2','--subdir=2','--subdir=3','file5.csv')
+        ]
+        result.sort(); expected_result.sort()
         self.assertEqual(result, expected_result)
 
 

@@ -34,10 +34,8 @@ class MockSaver(BaseSaver):
         return 1
 
     def exists(self, params):
-        if "--param1=1" in params:
-            return 1
-        else:
-            return 0
+        # Accept dicts from SearcherGrid.exists calls
+        return 1 if isinstance(params, dict) and params.get("--param1") == 1 else 0
 
 class TestSearcherGrid(unittest.TestCase):
 
@@ -225,6 +223,26 @@ class TestSearcherGrid(unittest.TestCase):
         searcher.check_existing_runs(MockSaver(MockLogger()))
         for config in searcher:
             self.assertTrue(config in [{'--param1':1, '--param2':'a'}, {'--param1':1, '--param2':'b'}, {'--param1':2, '--param2':'a'}, {'--param1':2, '--param2':'b'}])
+
+
+    def test_non_list_values_in_configs(self):
+        # param values must be iterable; a scalar should raise
+        hyperparameters = {
+            "--param1": 1,  # not a list/iterable of values
+            "--param2": ["a", "b"]
+        }
+        with self.assertRaises(TypeError):
+            SearcherGrid(hyperparameters)
+
+    def test_empty_value_list_results_in_empty_grid(self):
+        hyperparameters = {
+            "--param1": [],
+            "--param2": ["a"]
+        }
+        searcher = SearcherGrid(hyperparameters, runs=1)
+        self.assertEqual(len(searcher), 0)
+        with self.assertRaises(IndexError):
+            searcher.next_tune()
 
 
 if __name__ == '__main__':
