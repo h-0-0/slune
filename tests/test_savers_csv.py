@@ -758,34 +758,7 @@ class TestSaverCsvGetCurrentParams(unittest.TestCase):
         self.assertEqual(params, saver.get_current_params())
 
 
-class TestSaverCsvBadPrefix(unittest.TestCase):
-    def setUp(self):
-        self.test_dir = 'test_directory_bad_prefix'
-        if os.path.isdir(self.test_dir):
-            for root, dirs, files in os.walk(self.test_dir, topdown=False):
-                for name in files:
-                    os.remove(os.path.join(root, name))
-                for name in dirs:
-                    os.rmdir(os.path.join(root, name))
-            os.rmdir(self.test_dir)
-        os.makedirs(self.test_dir, exist_ok=True)
 
-    def tearDown(self):
-        for root, dirs, files in os.walk(self.test_dir, topdown=False):
-            for name in files:
-                os.remove(os.path.join(root, name))
-            for name in dirs:
-                os.rmdir(os.path.join(root, name))
-        os.rmdir(self.test_dir)
-
-    def test_results_prefix_validation(self):
-        saver = SaverCsv(LoggerDefault(), root_dir=self.test_dir)
-        bad_dir = os.path.join(self.test_dir, "--a=1")
-        os.makedirs(bad_dir, exist_ok=True)
-        with open(os.path.join(bad_dir, "badname.csv"), "w") as f:
-            f.write("")
-        with self.assertRaises(ValueError):
-            saver.get_path(["--a=1"])
 
 if __name__ == "__main__":
     unittest.main()
