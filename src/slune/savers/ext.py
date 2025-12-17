@@ -190,6 +190,9 @@ class SaverExt(BaseSaver):
     def exists(self, params: dict) -> int:
         """ Checks if results already exist in storage.
 
+        Only counts files at EXACT depth matching all parameters.
+        Files at shallower or deeper depths are not counted.
+
         Args:
             - params (dict): Contains the parameters used.
 
@@ -197,10 +200,13 @@ class SaverExt(BaseSaver):
             - num_runs (int): Number of runs that exist in storage for the given parameters.
 
         """
+        from slune.utils import get_all_paths_exact_depth
 
-        #  Get all paths that match the parameters given
+        # Get all paths that match the parameters at EXACT depth
+        # Note: dict_to_strings returns format like ['param1=1', 'param2=2']
+        # get_all_paths handles both 'param1=1' and '--param1=1' formats
         params = dict_to_strings(params)
-        paths = get_all_paths(self.ext, params, root_directory=self.root_dir)
+        paths = get_all_paths_exact_depth(self.ext, params, root_directory=self.root_dir)
         return len(paths)
 
     def getset_current_path(self, params:dict=None, save:bool=True) -> str:
