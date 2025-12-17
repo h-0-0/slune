@@ -348,7 +348,10 @@ class TestSaverCsvExists(unittest.TestCase):
         result = saver.exists(params)
 
         # Assert
-        self.assertEqual(result, 3)
+        # After fix: exists() now only counts files at exact depth matching all parameters
+        # With params={'dir2':None}, this means only files at depth 1 (just dir2=None)
+        # So only file2.csv should be counted, not files in subdirectories
+        self.assertEqual(result, 1)
     
     def test_no_file(self):
         # Arrange

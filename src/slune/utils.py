@@ -207,9 +207,22 @@ def get_all_paths(ext:str, dirs: List[str], root_directory: Optional[str]='.') -
             for p in dirs:
                 if '=' in p:
                     param, value = p.split('=')
+                    # Handle both 'param1=1' and '--param1=1' formats
+                    # Strip '--' or '-' prefix from param for comparison
+                    param_stripped = param.lstrip('-')
                     for dir in path:
-                        if dir.startswith(param + '='):
-                            _, dir_value = dir.split('=')
+                        # Check if directory matches (with or without -- prefix)
+                        # Directory format is '--param1=1' or 'param1=1'
+                        dir_matches = False
+                        if '=' in dir:
+                            dir_param_part, dir_value = dir.split('=', 1)
+                            # Strip '--' or '-' from directory param part
+                            dir_param_stripped = dir_param_part.lstrip('-')
+                            # Compare stripped parameter names
+                            if dir_param_stripped == param_stripped:
+                                dir_matches = True
+                        
+                        if dir_matches:
                             try:
                                 if float(value) == float(dir_value):
                                     contains.append(p)
@@ -221,3 +234,58 @@ def get_all_paths(ext:str, dirs: List[str], root_directory: Optional[str]='.') -
             if len(contains) == len(dirs):
                 matches.append(file)
     return matches
+
+def get_all_paths_exact_depth(ext: str, dirs: List[str], root_directory: Optional[str]='.') -> List[str]:
+    """ Find files at EXACT depth matching the number of parameters.
+    
+    For exists() checks - only matches files at exact depth.
+    Unlike get_all_paths(), this only returns files where the directory
+    depth exactly matches the number of parameters.
+    
+    Args:
+        - ext (str): Extension of the files we want to find.
+        - dirs (list of str): List of directory names we want returned paths to have.
+            Format: ['param1=1', 'param2=2'] or ['--param1=1', '--param2=2']
+        - root_directory (str, optional): Path to the root directory to be searched.
+    
+    Returns:
+        - matches (list of str): List of file paths at exact depth only.
+    """
+    # First get all files that match the parameters (at any depth)
+    all_matching = get_all_paths(ext, dirs, root_directory)
+    
+    if not all_matching:
+        return []
+    
+    # Filter to only files at exact depth
+    num_params = len(dirs)
+    exact_depth_files = []
+    
+    # Normalize root_directory for path comparison
+    root_dir_normalized = os.path.normpath(root_directory)
+    
+    for file_path in all_matching:
+        # Get relative path from root_directory
+        file_path_normalized = os.path.normpath(file_path)
+        if file_path_normalized.startswith(root_dir_normalized):
+            # Remove root directory and leading separator
+            rel_path = file_path_normalized[len(root_dir_normalized):].lstrip(os.path.sep)
+        else:
+            rel_path = file_path_normalized
+        
+        # Split into path components
+        path_parts = rel_path.split(os.path.sep)
+        
+        # Remove filename (last component that ends with ext)
+        # Keep only directory parts
+        dir_parts = [p for p in path_parts[:-1] if p]  # Exclude filename and empty strings
+        
+        # Count directories that match parameter format (contain '=')
+        # These are the parameter directories like '--param1=1' or 'param1=1'
+        param_dirs = [p for p in dir_parts if '=' in p]
+        
+        # Only include if depth matches exactly
+        if len(param_dirs) == num_params:
+            exact_depth_files.append(file_path)
+    
+    return exact_depth_files
